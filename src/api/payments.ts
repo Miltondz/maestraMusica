@@ -1,100 +1,68 @@
-import { supabase } from '../services/supabase'
+import { pb } from '../services/pocketbase'
+import { mapRecord } from './baseApi'
 import type { Payment, CreatePaymentData } from '../types'
 
 export const paymentsApi = {
   // Get all payments
   async getAll(): Promise<Payment[]> {
-    const { data, error } = await supabase
-      .from('payments')
-      .select('*')
-      .order('payment_date', { ascending: false })
-
-    if (error) throw error
-    return data || []
+    const records = await pb.collection('payments').getFullList({
+      sort: '-payment_date',
+    })
+    return records.map(mapRecord<Payment>)
   },
 
   // Get payment by ID
   async getById(id: string): Promise<Payment | null> {
-    const { data, error } = await supabase
-      .from('payments')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle()
-
-    if (error) throw error
-    return data
+    try {
+      const record = await pb.collection('payments').getOne(id)
+      return mapRecord<Payment>(record)
+    } catch (error: any) {
+      if (error.status === 404) return null
+      throw error
+    }
   },
 
   // Get payments by appointment ID
   async getByAppointmentId(appointmentId: string): Promise<Payment[]> {
-    const { data, error } = await supabase
-      .from('payments')
-      .select('*')
-      .eq('appointment_id', appointmentId)
-      .order('payment_date', { ascending: false })
-
-    if (error) throw error
-    return data || []
+    const records = await pb.collection('payments').getFullList({
+      filter: `appointment_id = "${appointmentId}"`,
+      sort: '-payment_date',
+    })
+    return records.map(mapRecord<Payment>)
   },
 
   // Get payments by status
   async getByStatus(status: 'completed' | 'pending' | 'cancelled' | 'failed'): Promise<Payment[]> {
-    const { data, error } = await supabase
-      .from('payments')
-      .select('*')
-      .eq('status', status)
-      .order('payment_date', { ascending: false })
-
-    if (error) throw error
-    return data || []
+    const records = await pb.collection('payments').getFullList({
+      filter: `status = "${status}"`,
+      sort: '-payment_date',
+    })
+    return records.map(mapRecord<Payment>)
   },
 
   // Create new payment
   async create(paymentData: CreatePaymentData): Promise<Payment> {
-    const { data, error } = await supabase
-      .from('payments')
-      .insert([paymentData])
-      .select()
-      .single()
-
-    if (error) throw error
-    return data
+    const record = await pb.collection('payments').create(paymentData)
+    return mapRecord<Payment>(record)
   },
 
   // Update payment
   async update(id: string, updates: Partial<CreatePaymentData>): Promise<Payment> {
-    const { data, error } = await supabase
-      .from('payments')
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single()
-
-    if (error) throw error
-    return data
+    const record = await pb.collection('payments').update(id, updates)
+    return mapRecord<Payment>(record)
   },
 
   // Update payment status
   async updateStatus(id: string, status: 'completed' | 'pending' | 'cancelled' | 'failed'): Promise<Payment> {
-    const { data, error } = await supabase
-      .from('payments')
-      .update({ status, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single()
-
-    if (error) throw error
-    return data
+    const record = await pb.collection('payments').update(id, {
+      status,
+    })
+    return mapRecord<Payment>(record)
   },
 
   // Delete payment
   async delete(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('payments')
-      .delete()
-      .eq('id', id)
-
-    if (error) throw error
+    await pb.collection('payments').delete(id)
   },
 
   // Get payment statistics
@@ -104,13 +72,11 @@ export const paymentsApi = {
     paidCount: number
     pendingCount: number
   }> {
-    const { data, error } = await supabase
-      .from('payments')
-      .select('amount, status')
+    const records = await pb.collection('payments').getFullList({
+      fields: 'amount,status',
+    })
 
-    if (error) throw error
-
-    const payments = data || []
+    const payments = records
     const totalRevenue = payments.filter(p => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0)
     const pendingAmount = payments.filter(p => p.status === 'pending').reduce((sum, p) => sum + p.amount, 0)
     const paidCount = payments.filter(p => p.status === 'completed').length

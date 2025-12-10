@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
-import { User } from '@supabase/supabase-js'
-import { supabase } from '../services/supabase'
+import React, { createContext, useEffect, useState } from 'react'
+import { pb } from '../services/pocketbase'
+import type { RecordModel } from 'pocketbase'
 
 export interface AuthContextType {
-  user: User | null
+  user: RecordModel | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
@@ -13,42 +13,33 @@ export interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<RecordModel | null>(pb.authStore.model)
+  const [loading, setLoading] = useState(false) // PB auth is sync on init
 
   useEffect(() => {
-    // Load user on mount
-    async function loadUser() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        setUser(user)
-      } catch (error) {
-        console.error('Error loading user:', error)
-      } finally {
-        setLoading(false)
-      }
+    // Subscribe to auth state changes
+    const unsubscribe = pb.authStore.onChange((token, model) => {
+      setUser(model)
+    })
+
+    return () => {
+      unsubscribe()
     }
-
-    loadUser()
-
-    // Set up auth listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user || null)
-      }
-    )
-
-    return () => subscription.unsubscribe()
   }, [])
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) throw error
+    try {
+      setLoading(true)
+      await pb.collection('users').authWithPassword(email, password)
+    } catch (error) {
+      throw error // Let the component handle the error
+    } finally {
+      setLoading(false)
+    }
   }
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
+    pb.authStore.clear()
   }
 
   return (

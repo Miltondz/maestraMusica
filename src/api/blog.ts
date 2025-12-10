@@ -1,32 +1,28 @@
-import { createSupabaseApi } from './baseApi'
-import { supabase } from '../services/supabase'
+import { createPocketBaseApi, mapRecord } from './baseApi'
+import { pb } from '../services/pocketbase'
 import type { BlogPost, CreateBlogPostData } from '../types'
 
-const baseApi = createSupabaseApi<BlogPost>('blog_posts')
+const baseApi = createPocketBaseApi<BlogPost>('blog_posts')
 
 export const blogApi = {
   ...baseApi,
   
   // Override getAll to sort by published_date
   async getAll(): Promise<BlogPost[]> {
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .order('published_date', { ascending: false })
-
-    if (error) throw error
-    return data || []
+    const records = await pb.collection('blog_posts').getFullList({
+      sort: '-published_date',
+    })
+    return records.map(mapRecord<BlogPost>)
   },
 
   // Get blog post by slug
   async getBySlug(slug: string): Promise<BlogPost | null> {
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('slug', slug)
-      .maybeSingle()
-
-    if (error) throw error
-    return data
+    try {
+      const record = await pb.collection('blog_posts').getFirstListItem(`slug="${slug}"`)
+      return mapRecord<BlogPost>(record)
+    } catch (error: any) {
+      if (error.status === 404) return null
+      throw error
+    }
   }
 }

@@ -1,0 +1,597 @@
+[
+  {
+    "id": "users",
+    "name": "users",
+    "type": "auth",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "users_name",
+        "name": "name",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": null,
+          "max": null,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "users_avatar",
+        "name": "avatar",
+        "type": "file",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "mimeTypes": [
+            "image/jpeg",
+            "image/png",
+            "image/svg+xml",
+            "image/gif",
+            "image/webp"
+          ],
+          "thumbs": null,
+          "maxSelect": 1,
+          "maxSize": 5242880,
+          "protected": false
+        }
+      }
+    ],
+    "listRule": "id = @request.auth.id",
+    "viewRule": "id = @request.auth.id",
+    "createRule": "",
+    "updateRule": "id = @request.auth.id",
+    "deleteRule": "id = @request.auth.id",
+    "options": {
+      "allowEmailAuth": true,
+      "allowOAuth2Auth": true,
+      "allowUsernameAuth": true,
+      "exceptEmailDomains": null,
+      "manageRule": null,
+      "minPasswordLength": 8,
+      "onlyEmailDomains": null,
+      "onlyVerified": false,
+      "requireEmail": false
+    }
+  },
+  {
+    "id": "8xp2m9kl4s1q7da",
+    "name": "services",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "field_name",
+        "name": "name",
+        "type": "text",
+        "required": true,
+        "presentable": true,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_desc",
+        "name": "description",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_price",
+        "name": "price",
+        "type": "number",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": 0, "max": null, "noDecimal": false }
+      },
+      {
+        "system": false,
+        "id": "field_dur",
+        "name": "duration_minutes",
+        "type": "number",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": 0, "max": null, "noDecimal": true }
+      },
+      {
+        "system": false,
+        "id": "field_img",
+        "name": "image_url",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {}
+  },
+  {
+    "id": "0kfs82hqm19vx4e",
+    "name": "testimonials",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "field_auth",
+        "name": "author_name",
+        "type": "text",
+        "required": true,
+        "presentable": true,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_cont",
+        "name": "content",
+        "type": "text",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_rat",
+        "name": "rating",
+        "type": "number",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": 1, "max": 5, "noDecimal": true }
+      }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {}
+  },
+  {
+    "id": "4mds19eq0j7nlxp",
+    "name": "blog_posts",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "field_title",
+        "name": "title",
+        "type": "text",
+        "required": true,
+        "presentable": true,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_slug",
+        "name": "slug",
+        "type": "text",
+        "required": true,
+        "presentable": false,
+        "unique": true,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_bcont",
+        "name": "content",
+        "type": "editor",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "convertUrls": false }
+      },
+      {
+        "system": false,
+        "id": "field_exce",
+        "name": "excerpt",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_pdate",
+        "name": "published_date",
+        "type": "date",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null }
+      },
+      {
+        "system": false,
+        "id": "field_bimg",
+        "name": "image_url",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {}
+  },
+  {
+    "id": "2n8kls93p0ad7xw",
+    "name": "appointments",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "field_cname",
+        "name": "client_name",
+        "type": "text",
+        "required": true,
+        "presentable": true,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_cemail",
+        "name": "client_email",
+        "type": "email",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "exceptDomains": null, "onlyDomains": null }
+      },
+      {
+        "system": false,
+        "id": "field_cphone",
+        "name": "client_phone",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_serv",
+        "name": "service_id",
+        "type": "relation",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "8xp2m9kl4s1q7da",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": 1,
+          "displayFields": null
+        }
+      },
+      {
+        "system": false,
+        "id": "field_adate",
+        "name": "appointment_date",
+        "type": "date",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null }
+      },
+      {
+        "system": false,
+        "id": "field_atime",
+        "name": "appointment_time",
+        "type": "text",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_stat",
+        "name": "status",
+        "type": "select",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": ["pending", "confirmed", "cancelled", "completed"]
+        }
+      },
+      {
+        "system": false,
+        "id": "field_note",
+        "name": "notes",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      }
+    ],
+    "listRule": null,
+    "viewRule": null,
+    "createRule": "",
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {
+      "defaults": { "status": "pending" }
+    }
+  },
+  {
+    "id": "5qaz9l1mx02e7tr",
+    "name": "payments",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "field_appo",
+        "name": "appointment_id",
+        "type": "relation",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "2n8kls93p0ad7xw",
+          "cascadeDelete": false,
+          "minSelect": null,
+          "maxSelect": 1,
+          "displayFields": null
+        }
+      },
+      {
+        "system": false,
+        "id": "field_amnt",
+        "name": "amount",
+        "type": "number",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": 0, "max": null, "noDecimal": false }
+      },
+      {
+        "system": false,
+        "id": "field_payd",
+        "name": "payment_date",
+        "type": "date",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null }
+      },
+      {
+        "system": false,
+        "id": "field_pstat",
+        "name": "status",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": ["pending", "completed", "failed", "cancelled"]
+        }
+      }
+    ],
+    "listRule": null,
+    "viewRule": null,
+    "createRule": "",
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {}
+  },
+  {
+    "id": "0pls92jf7ma1xew",
+    "name": "media_gallery",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "field_mtitle",
+        "name": "title",
+        "type": "text",
+        "required": true,
+        "presentable": true,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_mtype",
+        "name": "media_type",
+        "type": "select",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": ["photo", "video", "youtube", "instagram"]
+        }
+      },
+      {
+        "system": false,
+        "id": "field_murl",
+        "name": "media_url",
+        "type": "text",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_mcat",
+        "name": "category",
+        "type": "text",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_feat",
+        "name": "is_featured",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
+      }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {}
+  },
+  {
+    "id": "8bv1p4xs0f9qa2m",
+    "name": "contact_messages",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "field_cname",
+        "name": "name",
+        "type": "text",
+        "required": true,
+        "presentable": true,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_cemail",
+        "name": "email",
+        "type": "email",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "exceptDomains": null, "onlyDomains": null }
+      },
+      {
+        "system": false,
+        "id": "field_cmsg",
+        "name": "message",
+        "type": "text",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_cread",
+        "name": "is_read",
+        "type": "bool",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {}
+      }
+    ],
+    "listRule": null,
+    "viewRule": null,
+    "createRule": "",
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {}
+  },
+  {
+    "id": "1kz8e3mx2r7p0fn",
+    "name": "site_content",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "field_key",
+        "name": "key",
+        "type": "text",
+        "required": true,
+        "presentable": true,
+        "unique": true,
+        "options": { "min": null, "max": null, "pattern": "" }
+      },
+      {
+        "system": false,
+        "id": "field_val",
+        "name": "value",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": { "maxSize": 2000000 }
+      }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {}
+  },
+  {
+    "id": "9qs0xlpf14j8rmb",
+    "name": "media_uploads",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "system": false,
+        "id": "field_file",
+        "name": "file",
+        "type": "file",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "mimeTypes": ["image/jpeg", "image/png", "image/svg+xml", "image/gif", "image/webp"],
+          "thumbs": null,
+          "maxSelect": 1,
+          "maxSize": 5242880,
+          "protected": false
+        }
+      }
+    ],
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {}
+  }
+]

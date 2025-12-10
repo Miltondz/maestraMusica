@@ -1,57 +1,43 @@
-import { createSupabaseApi } from './baseApi'
-import { supabase } from '../services/supabase'
+import { createPocketBaseApi, mapRecord } from './baseApi'
+import { pb } from '../services/pocketbase'
 import type { MediaGallery, CreateMediaGalleryData } from '../types'
 
-const baseApi = createSupabaseApi<MediaGallery>('media_gallery')
+const baseApi = createPocketBaseApi<MediaGallery>('media_gallery')
 
 export const mediaGalleryApi = {
   ...baseApi,
   // Get featured media items
   async getFeatured(): Promise<MediaGallery[]> {
-    const { data, error } = await supabase
-      .from('media_gallery')
-      .select('*')
-      .eq('is_featured', true)
-      .order('created_at', { ascending: false })
-
-    if (error) throw error
-    return data || []
+    const records = await pb.collection('media_gallery').getFullList({
+      filter: 'is_featured = true',
+      sort: '-created',
+    })
+    return records.map(mapRecord<MediaGallery>)
   },
 
   // Get media items by category
   async getByCategory(category: string): Promise<MediaGallery[]> {
-    const { data, error } = await supabase
-      .from('media_gallery')
-      .select('*')
-      .eq('category', category)
-      .order('created_at', { ascending: false })
-
-    if (error) throw error
-    return data || []
+    const records = await pb.collection('media_gallery').getFullList({
+      filter: `category = "${category}"`,
+      sort: '-created',
+    })
+    return records.map(mapRecord<MediaGallery>)
   },
 
   // Get media items by type
   async getByType(mediaType: 'photo' | 'video' | 'youtube' | 'instagram'): Promise<MediaGallery[]> {
-    const { data, error } = await supabase
-      .from('media_gallery')
-      .select('*')
-      .eq('media_type', mediaType)
-      .order('created_at', { ascending: false })
-
-    if (error) throw error
-    return data || []
+    const records = await pb.collection('media_gallery').getFullList({
+      filter: `media_type = "${mediaType}"`,
+      sort: '-created',
+    })
+    return records.map(mapRecord<MediaGallery>)
   },
 
   // Toggle featured status
   async toggleFeatured(id: string, isFeatured: boolean): Promise<MediaGallery> {
-    const { data, error } = await supabase
-      .from('media_gallery')
-      .update({ is_featured: isFeatured, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single()
-
-    if (error) throw error
-    return data
+    const record = await pb.collection('media_gallery').update(id, {
+      is_featured: isFeatured,
+    })
+    return mapRecord<MediaGallery>(record)
   }
 }

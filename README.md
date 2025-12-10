@@ -27,6 +27,7 @@ Este repositorio contiene el código fuente de un sitio web completo y profesion
 ## 🛠️ Stack Tecnológico
 
 ### Frontend
+
 - **Framework**: React 18 con TypeScript y Vite.
 - **Estilos**: Tailwind CSS para un diseño moderno y personalizable.
 - **Animaciones**: Framer Motion para interacciones y animaciones fluidas.
@@ -36,18 +37,21 @@ Este repositorio contiene el código fuente de un sitio web completo y profesion
 - **Formularios**: React Hook Form con Zod para validaciones robustas.
 
 ### Backend (BaaS)
-- **Plataforma**: Supabase.
-- **Base de Datos**: PostgreSQL.
-- **Autenticación**: Supabase Auth para la seguridad del panel de administración.
-- **Almacenamiento**: Supabase Storage para archivos multimedia.
+
+- **Plataforma**: PocketBase (Auto-hospedado en Railway).
+- **Base de Datos**: SQLite (Gestionado por PocketBase).
+- **Autenticación**: PocketBase Auth (Email/Password).
+- **Almacenamiento**: PocketBase Files.
 
 ## ⚙️ Instalación y Despliegue
 
 ### Requisitos
+
 - Node.js (v18 o superior)
 - npm
 
 ### Desarrollo Local
+
 1.  **Clonar el repositorio**:
     ```bash
     git clone https://github.com/your-repo/your-repo-name.git
@@ -57,14 +61,24 @@ Este repositorio contiene el código fuente de un sitio web completo y profesion
     ```bash
     npm install
     ```
-3.  **Configurar Supabase**:
-    - Crea un proyecto en [Supabase](https://supabase.com/).
-    - En el editor SQL, ejecuta el script de `database-setup-spanish.sql` para crear las tablas.
-    - Crea un archivo `.env` a partir de `.env.example` y añade tus claves de API de Supabase.
+3.  **Configurar PocketBase**:
+
+    - Asegúrate de tener una instancia de PocketBase corriendo (local o remota).
+    - Crea un archivo `.env` en la raíz del proyecto:
+
     ```env
-    VITE_SUPABASE_URL="TU_URL_DE_SUPABASE"
-    VITE_SUPABASE_ANON_KEY="TU_ANON_KEY_DE_SUPABASE"
+    VITE_POCKETBASE_URL="TU_URL_DE_POCKETBASE"
+    # Ejemplo Local: http://127.0.0.1:8090
+    # Ejemplo Producción: https://tu-app.up.railway.app
     ```
+
+    - **Importar Esquema**:
+      - Accede al panel de administración (`/_/`).
+      - Ve a _Settings > Import collections_.
+      - Carga el archivo `pb_full_schema.json` incluido en este repositorio.
+    - **Crear Usuario Admin Web**:
+      - En la colección `users`, crea un nuevo registro con tus credenciales para acceder al CMS.
+
 4.  **Ejecutar el servidor de desarrollo**:
     ```bash
     npm run dev
@@ -72,24 +86,29 @@ Este repositorio contiene el código fuente de un sitio web completo y profesion
     La aplicación estará disponible en `http://localhost:5173`.
 
 ### Construcción para Producción
+
 ```bash
 npm run build
 ```
+
 Esto generará la carpeta `dist` con los archivos estáticos listos para producción.
 
 ### Despliegue
+
 El proyecto está listo para ser desplegado en plataformas como Netlify, Vercel o GitHub Pages. Incluye un archivo `public/_redirects` para una configuración sencilla en Netlify.
 
 ## 🎨 Mejoras Realizadas
 
 Este proyecto ha sido mejorado con las siguientes características:
 
-- **Mejoras de SEO**: 
+- **Mejoras de SEO**:
+
   - Se ha optimizado el `index.html` con meta-tags para título, descripción y palabras clave.
   - Se han añadido `sitemap.xml` y `robots.txt` para mejorar la indexación.
   - Se ha incorporado texto y atributos `alt` ricos en palabras clave en todo el sitio.
 
-- **Mejoras Visuales y de UX**: 
+- **Mejoras Visuales y de UX**:
+
   - Se han añadido animaciones y transiciones en toda la web utilizando `framer-motion`.
   - Se ha mejorado el diseño y el espaciado en todas las páginas para una apariencia más limpia y profesional.
   - Los botones y tarjetas ahora tienen efectos de hover y foco para una mejor interactividad.

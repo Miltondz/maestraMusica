@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { supabase } from '../services/supabase';
+import { pb } from '../services/pocketbase';
 
 export interface UseImageUploadOptions {
   bucket?: string;
@@ -26,51 +26,44 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
         throw new Error('File size must be less than 10MB');
       }
 
-      // Convert file to base64
-      const base64Data = await new Promise<string>((resolve, reject) => {
+      // 1. Read file for preview/progress simulation
+      await new Promise<void>((resolve, reject) => {
         const reader = new FileReader();
-        reader.onloadend = () => {
-          if (reader.result) {
-            resolve(reader.result as string);
-          } else {
-            reject(new Error('Failed to read file'));
-          }
-        };
+        reader.onloadend = () => resolve();
         reader.onerror = () => reject(new Error('Failed to read file'));
         reader.onprogress = (event) => {
           if (event.lengthComputable) {
-            setProgress((event.loaded / event.total) * 50); // First 50% for reading
+            setProgress((event.loaded / event.total) * 30);
           }
         };
-        reader.readAsDataURL(file);
+        reader.readAsArrayBuffer(file);
       });
 
-      // Generate unique filename
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      setProgress(50);
 
-      setProgress(70); // Progress for upload preparation
+      // 2. Upload to PocketBase
+      // Assumes a collection named 'media_uploads' exists with a 'file' field.
+      // You can also use other collections like 'blog_posts' if the file is attached directly, 
+      // but this hook seems generic.
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      // Optional: Add metadata if needed, e.g. base64Data or fileName, 
+      // but PB handles fileName automatically from the File object.
 
-      // Upload using edge function
-      const { data, error } = await supabase.functions.invoke('image-upload', {
-        body: {
-          imageData: base64Data,
-          fileName,
-          bucket: options.bucket || 'blog-images'
-        }
-      });
-
-      if (error) {
-        throw new Error(error.message || 'Upload failed');
-      }
-
+      const record = await pb.collection('media_uploads').create(formData);
+      
       setProgress(100);
       
-      const imageUrl = data.data.publicUrl;
+      // 3. Get URL
+      // pb.files.getUrl(record, filename)
+      const imageUrl = pb.files.getUrl(record, record.file);
+      
       options.onSuccess?.(imageUrl);
       
       return imageUrl;
     } catch (error) {
+      console.error(error); // Debugging
       const errorMessage = error instanceof Error ? error.message : 'Upload failed';
       options.onError?.(errorMessage);
       throw error;
