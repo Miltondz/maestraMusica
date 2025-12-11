@@ -1,6 +1,6 @@
 
 async function verifyAllCollections() {
-  const baseUrl = "https://pocketbase-production-9c36.up.railway.app";
+  const baseUrl = "https://pocketbase-production-9d94.up.railway.app";
   const collections = [
     'services', 
     'testimonials', 

@@ -1,47 +1,9 @@
 [
   {
-    "id": "users",
+    "id": "9k2s8lmf40xq1zb",
     "name": "users",
     "type": "auth",
     "system": false,
-    "schema": [
-      {
-        "system": false,
-        "id": "users_name",
-        "name": "name",
-        "type": "text",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "min": null,
-          "max": null,
-          "pattern": ""
-        }
-      },
-      {
-        "system": false,
-        "id": "users_avatar",
-        "name": "avatar",
-        "type": "file",
-        "required": false,
-        "presentable": false,
-        "unique": false,
-        "options": {
-          "mimeTypes": [
-            "image/jpeg",
-            "image/png",
-            "image/svg+xml",
-            "image/gif",
-            "image/webp"
-          ],
-          "thumbs": null,
-          "maxSelect": 1,
-          "maxSize": 5242880,
-          "protected": false
-        }
-      }
-    ],
     "listRule": "id = @request.auth.id",
     "viewRule": "id = @request.auth.id",
     "createRule": "",
@@ -57,14 +19,54 @@
       "onlyEmailDomains": null,
       "onlyVerified": false,
       "requireEmail": false
-    }
+    },
+    "fields": [
+      {
+        "system": false,
+        "id": "users_name",
+        "name": "name",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "min": null,
+        "max": null,
+        "pattern": ""
+      },
+      {
+        "system": false,
+        "id": "users_avatar",
+        "name": "avatar",
+        "type": "file",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "mimeTypes": [
+          "image/jpeg",
+          "image/png",
+          "image/svg+xml",
+          "image/gif",
+          "image/webp"
+        ],
+        "thumbs": null,
+        "maxSelect": 1,
+        "maxSize": 5242880,
+        "protected": false
+      }
+    ]
   },
   {
     "id": "8xp2m9kl4s1q7da",
     "name": "services",
     "type": "base",
     "system": false,
-    "schema": [
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {},
+    "fields": [
       {
         "system": false,
         "id": "field_name",
@@ -73,7 +75,9 @@
         "required": true,
         "presentable": true,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -83,7 +87,9 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -93,7 +99,9 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "min": 0, "max": null, "noDecimal": false }
+        "min": 0,
+        "max": null,
+        "noDecimal": false
       },
       {
         "system": false,
@@ -103,7 +111,9 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "min": 0, "max": null, "noDecimal": true }
+        "min": 0,
+        "max": null,
+        "noDecimal": true
       },
       {
         "system": false,
@@ -113,22 +123,24 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       }
-    ],
-    "listRule": "",
-    "viewRule": "",
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "options": {}
+    ]
   },
   {
     "id": "0kfs82hqm19vx4e",
     "name": "testimonials",
     "type": "base",
     "system": false,
-    "schema": [
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {},
+    "fields": [
       {
         "system": false,
         "id": "field_auth",
@@ -137,7 +149,9 @@
         "required": true,
         "presentable": true,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -147,7 +161,9 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -157,22 +173,24 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": { "min": 1, "max": 5, "noDecimal": true }
+        "min": 1,
+        "max": 5,
+        "noDecimal": true
       }
-    ],
-    "listRule": "",
-    "viewRule": "",
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "options": {}
+    ]
   },
   {
     "id": "4mds19eq0j7nlxp",
     "name": "blog_posts",
     "type": "base",
     "system": false,
-    "schema": [
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {},
+    "fields": [
       {
         "system": false,
         "id": "field_title",
@@ -181,7 +199,9 @@
         "required": true,
         "presentable": true,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -191,7 +211,9 @@
         "required": true,
         "presentable": false,
         "unique": true,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -201,7 +223,7 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "convertUrls": false }
+        "convertUrls": false
       },
       {
         "system": false,
@@ -211,7 +233,9 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -221,7 +245,8 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null }
+        "min": null,
+        "max": null
       },
       {
         "system": false,
@@ -231,22 +256,28 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       }
-    ],
-    "listRule": "",
-    "viewRule": "",
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "options": {}
+    ]
   },
   {
     "id": "2n8kls93p0ad7xw",
     "name": "appointments",
     "type": "base",
     "system": false,
-    "schema": [
+    "listRule": null,
+    "viewRule": null,
+    "createRule": "",
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {
+      "defaults": {
+        "status": "pending"
+      }
+    },
+    "fields": [
       {
         "system": false,
         "id": "field_cname",
@@ -255,7 +286,9 @@
         "required": true,
         "presentable": true,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -265,7 +298,8 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "exceptDomains": null, "onlyDomains": null }
+        "exceptDomains": null,
+        "onlyDomains": null
       },
       {
         "system": false,
@@ -275,7 +309,9 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -285,13 +321,11 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": {
-          "collectionId": "8xp2m9kl4s1q7da",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
+        "collectionId": "8xp2m9kl4s1q7da",
+        "cascadeDelete": false,
+        "minSelect": null,
+        "maxSelect": 1,
+        "displayFields": null
       },
       {
         "system": false,
@@ -301,7 +335,8 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null }
+        "min": null,
+        "max": null
       },
       {
         "system": false,
@@ -311,7 +346,9 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -321,10 +358,13 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": ["pending", "confirmed", "cancelled", "completed"]
-        }
+        "maxSelect": 1,
+        "values": [
+          "pending",
+          "confirmed",
+          "cancelled",
+          "completed"
+        ]
       },
       {
         "system": false,
@@ -334,24 +374,24 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       }
-    ],
-    "listRule": null,
-    "viewRule": null,
-    "createRule": "",
-    "updateRule": null,
-    "deleteRule": null,
-    "options": {
-      "defaults": { "status": "pending" }
-    }
+    ]
   },
   {
     "id": "5qaz9l1mx02e7tr",
     "name": "payments",
     "type": "base",
     "system": false,
-    "schema": [
+    "listRule": null,
+    "viewRule": null,
+    "createRule": "",
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {},
+    "fields": [
       {
         "system": false,
         "id": "field_appo",
@@ -360,13 +400,11 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": {
-          "collectionId": "2n8kls93p0ad7xw",
-          "cascadeDelete": false,
-          "minSelect": null,
-          "maxSelect": 1,
-          "displayFields": null
-        }
+        "collectionId": "2n8kls93p0ad7xw",
+        "cascadeDelete": false,
+        "minSelect": null,
+        "maxSelect": 1,
+        "displayFields": null
       },
       {
         "system": false,
@@ -376,7 +414,9 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "min": 0, "max": null, "noDecimal": false }
+        "min": 0,
+        "max": null,
+        "noDecimal": false
       },
       {
         "system": false,
@@ -386,7 +426,8 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null }
+        "min": null,
+        "max": null
       },
       {
         "system": false,
@@ -396,25 +437,28 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": ["pending", "completed", "failed", "cancelled"]
-        }
+        "maxSelect": 1,
+        "values": [
+          "pending",
+          "completed",
+          "failed",
+          "cancelled"
+        ]
       }
-    ],
-    "listRule": null,
-    "viewRule": null,
-    "createRule": "",
-    "updateRule": null,
-    "deleteRule": null,
-    "options": {}
+    ]
   },
   {
     "id": "0pls92jf7ma1xew",
     "name": "media_gallery",
     "type": "base",
     "system": false,
-    "schema": [
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {},
+    "fields": [
       {
         "system": false,
         "id": "field_mtitle",
@@ -423,7 +467,9 @@
         "required": true,
         "presentable": true,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -433,10 +479,13 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": {
-          "maxSelect": 1,
-          "values": ["photo", "video", "youtube", "instagram"]
-        }
+        "maxSelect": 1,
+        "values": [
+          "photo",
+          "video",
+          "youtube",
+          "instagram"
+        ]
       },
       {
         "system": false,
@@ -446,7 +495,9 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -456,7 +507,9 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -465,23 +518,22 @@
         "type": "bool",
         "required": false,
         "presentable": false,
-        "unique": false,
-        "options": {}
+        "unique": false
       }
-    ],
-    "listRule": "",
-    "viewRule": "",
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "options": {}
+    ]
   },
   {
     "id": "8bv1p4xs0f9qa2m",
     "name": "contact_messages",
     "type": "base",
     "system": false,
-    "schema": [
+    "listRule": null,
+    "viewRule": null,
+    "createRule": "",
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {},
+    "fields": [
       {
         "system": false,
         "id": "field_cname",
@@ -490,7 +542,9 @@
         "required": true,
         "presentable": true,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -500,7 +554,8 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "exceptDomains": null, "onlyDomains": null }
+        "exceptDomains": null,
+        "onlyDomains": null
       },
       {
         "system": false,
@@ -510,7 +565,9 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -519,23 +576,22 @@
         "type": "bool",
         "required": false,
         "presentable": false,
-        "unique": false,
-        "options": {}
+        "unique": false
       }
-    ],
-    "listRule": null,
-    "viewRule": null,
-    "createRule": "",
-    "updateRule": null,
-    "deleteRule": null,
-    "options": {}
+    ]
   },
   {
     "id": "1kz8e3mx2r7p0fn",
     "name": "site_content",
     "type": "base",
     "system": false,
-    "schema": [
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {},
+    "fields": [
       {
         "system": false,
         "id": "field_key",
@@ -544,7 +600,9 @@
         "required": true,
         "presentable": true,
         "unique": true,
-        "options": { "min": null, "max": null, "pattern": "" }
+        "min": null,
+        "max": null,
+        "pattern": ""
       },
       {
         "system": false,
@@ -554,22 +612,22 @@
         "required": false,
         "presentable": false,
         "unique": false,
-        "options": { "maxSize": 2000000 }
+        "maxSize": 2000000
       }
-    ],
-    "listRule": "",
-    "viewRule": "",
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "options": {}
+    ]
   },
   {
     "id": "9qs0xlpf14j8rmb",
     "name": "media_uploads",
     "type": "base",
     "system": false,
-    "schema": [
+    "listRule": "",
+    "viewRule": "",
+    "createRule": null,
+    "updateRule": null,
+    "deleteRule": null,
+    "options": {},
+    "fields": [
       {
         "system": false,
         "id": "field_file",
@@ -578,20 +636,18 @@
         "required": true,
         "presentable": false,
         "unique": false,
-        "options": {
-          "mimeTypes": ["image/jpeg", "image/png", "image/svg+xml", "image/gif", "image/webp"],
-          "thumbs": null,
-          "maxSelect": 1,
-          "maxSize": 5242880,
-          "protected": false
-        }
+        "mimeTypes": [
+          "image/jpeg",
+          "image/png",
+          "image/svg+xml",
+          "image/gif",
+          "image/webp"
+        ],
+        "thumbs": null,
+        "maxSelect": 1,
+        "maxSize": 5242880,
+        "protected": false
       }
-    ],
-    "listRule": "",
-    "viewRule": "",
-    "createRule": null,
-    "updateRule": null,
-    "deleteRule": null,
-    "options": {}
+    ]
   }
 ]
