@@ -1,119 +1,116 @@
-# Maestra de Música - Sitio Web Profesional
+# 🎵 Maestra de Música - Plataforma Web Profesional
 
-Este repositorio contiene el código fuente de un sitio web completo y profesional para una maestra de música, construido con tecnologías modernas para ofrecer una experiencia de usuario excepcional y una gestión de contenido sencilla.
+[![React](https://img.shields.io/badge/React-18-blue?logo=react)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.0-purple?logo=vite)](https://vitejs.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![PocketBase](https://img.shields.io/badge/PocketBase-BaaS-orange?logo=sqlite)](https://pocketbase.io/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0-cyan?logo=tailwindcss)](https://tailwindcss.com/)
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/your-repo/your-repo-name) <!-- Reemplazar con el enlace real -->
+Una plataforma web moderna, elegante y autoadministrable diseñada para la gestión integral de una academia de música personal. Permite la reserva de clases, gestión de contenidos (blog, galería), administración de estudiantes y pagos, todo bajo una interfaz premium y responsiva.
 
-## ✨ Características Principales
+---
 
-- **Diseño Moderno y Adaptable**: Interfaz elegante y totalmente responsive, optimizada para cualquier dispositivo.
-- **SEO Optimizado**: Implementación de las mejores prácticas de SEO, incluyendo meta-tags, sitemap, y `robots.txt` para una máxima visibilidad en buscadores.
-- **Animaciones y Transiciones Suaves**: Uso de `framer-motion` para animaciones fluidas que mejoran la experiencia de usuario.
-- **Panel de Administración Completo**: Área privada para gestionar servicios, testimonios, blog, galería y reservas.
-- **Reserva de Clases Dinámica**: Sistema interactivo para que los estudiantes consulten disponibilidad y agenden clases.
-- **Exportación de Datos**: Funcionalidad en el panel de administración para exportar datos de citas, mensajes y pagos a formatos PDF y TXT.
+## ✨ Características Destacadas
 
-## 🚀 Secciones Clave
+### 🎨 Experiencia de Usuario (Frontend)
+- **Diseño Premium**: Interfaz moderna con animaciones fluidas (`framer-motion`) y diseño responsivo adaptado a todos los dispositivos.
+- **Reserva de Clases**: Sistema interactivo para que los estudiantes consulten disponibilidad y agenden lecciones en tiempo real.
+- **Contenido Dinámico**:
+  - **Blog Educativo**: Artículos formativos con formateo rico y soporte multimedia.
+  - **Galería Multimedia**: Soporte para fotos, videos locales, insertos de **YouTube** e **Instagram**.
+  - **Servicios y Precios**: Catálogo claro y atractivo de la oferta académica.
+- **SEO Avanzado**: Implementación de **JSON-LD (Schema.org)** para Rich Snippets (Escuela de Música, Artículos) y meta-etiquetas dinámicas con `react-helmet-async` para optimización en buscadores e IA.
 
-- **Inicio**: Página de bienvenida con una introducción a los servicios, testimonios y un llamado a la acción claro.
-- **Sobre Mí**: Biografía detallada, experiencia y filosofía de enseñanza, presentada con una línea de tiempo interactiva.
-- **Servicios**: Listado de clases ofrecidas con descripciones, precios y la opción de reservar directamente.
-- **Galería**: Colección de fotos y videos con filtros por categoría y tipo de medio, y un visor de lightbox.
-- **Blog**: Artículos educativos con un buscador integrado.
-- **Contacto**: Formulario de contacto y detalles de información.
-- **Reservar Clase**: Página dedicada para que los estudiantes agenden sus clases.
-- **/admin**: Panel de administración para la gestión integral del sitio.
+### 🛠️ Panel de Administración (CMS)
+Un dashboard seguro y potente para la gestión total del negocio:
+- **Gestión de Citas**: Visualización de calendario, confirmación/cancelación de reservas y seguimiento de estudiantes.
+- **Control Financiero**: Registro de pagos, estimación de ingresos y exportación de reportes.
+- **CMS Integrado**: Editor completo para crear y editar servicios, testimonios, posts del blog y contenido del sitio sin tocar código.
+- **Centro de Mensajes**: Bandeja de entrada para consultas de contacto con estados de lectura/respuesta.
 
-## 🛠️ Stack Tecnológico
+---
 
-### Frontend
+## 🚀 Stack Tecnológico
 
-- **Framework**: React 18 con TypeScript y Vite.
-- **Estilos**: Tailwind CSS para un diseño moderno y personalizable.
-- **Animaciones**: Framer Motion para interacciones y animaciones fluidas.
-- **Componentes**: Componentes reutilizables y accesibles.
-- **Iconos**: Lucide React.
-- **Enrutamiento**: React Router.
-- **Formularios**: React Hook Form con Zod para validaciones robustas.
+La arquitectura está diseñada para ser rápida, escalable y fácil de mantener.
 
-### Backend (BaaS)
+| Capa | Tecnología | Descripción |
+| :--- | :--- | :--- |
+| **Frontend** | **React 18 + TypeScript** | Lógica robusta y tipado estático para evitar errores. |
+| **Build Tool** | **Vite** | Entorno de desarrollo ultrarrápido y construcción optimizada. |
+| **Estilos** | **Tailwind CSS** | Diseño utility-first para una UI consistente y ligera. |
+| **Backend** | **PocketBase** | BaaS (Backend as a Service) ligero, portable y de alto rendimiento (Go + SQLite). |
+| **Despliegue** | **Netlify + Railway** | Frontend en CDN global y Backend en infraestructura escalable. |
 
-- **Plataforma**: PocketBase (Auto-hospedado en Railway).
-- **Base de Datos**: SQLite (Gestionado por PocketBase).
-- **Autenticación**: PocketBase Auth (Email/Password).
-- **Almacenamiento**: PocketBase Files.
+---
 
-## ⚙️ Instalación y Despliegue
+## ⚙️ Instalación y Desarrollo Local
 
-### Requisitos
+Sigue estos pasos para levantar el proyecto en tu máquina local.
 
-- Node.js (v18 o superior)
-- npm
+### Prerrequisitos
+- Node.js (v18+)
+- Una instancia de PocketBase (Local o Remota)
 
-### Desarrollo Local
-
-1.  **Clonar el repositorio**:
-    ```bash
-    git clone https://github.com/your-repo/your-repo-name.git
-    cd your-repo-name
-    ```
-2.  **Instalar dependencias**:
-    ```bash
-    npm install
-    ```
-3.  **Configurar PocketBase**:
-
-    - Asegúrate de tener una instancia de PocketBase corriendo (local o remota).
-    - Crea un archivo `.env` en la raíz del proyecto:
-
-    ```env
-    VITE_POCKETBASE_URL="TU_URL_DE_POCKETBASE"
-    # Ejemplo Local: http://127.0.0.1:8090
-    # Ejemplo Producción: https://tu-app.up.railway.app
-    ```
-
-    - **Importar Esquema**:
-      - Accede al panel de administración (`/_/`).
-      - Ve a _Settings > Import collections_.
-      - Carga el archivo `pb_full_schema.json` incluido en este repositorio.
-    - **Crear Usuario Admin Web**:
-      - En la colección `users`, crea un nuevo registro con tus credenciales para acceder al CMS.
-
-4.  **Ejecutar el servidor de desarrollo**:
-    ```bash
-    npm run dev
-    ```
-    La aplicación estará disponible en `http://localhost:5173`.
-
-### Construcción para Producción
-
+### 1. Clonar e Instalar
 ```bash
-npm run build
+git clone https://github.com/Miltondz/maestraMusica.git
+cd maestraMusica/project
+npm install
 ```
 
-Esto generará la carpeta `dist` con los archivos estáticos listos para producción.
+### 2. Configuración de Entorno
+Crea un archivo `.env` en la raíz del proyecto (`/project/.env`) basándote en `.env.example`:
 
-### Despliegue
+```env
+VITE_POCKETBASE_URL="TU_URL_DE_POCKETBASE"
+# Ejemplo Producción: https://pocketbase-production-xxxx.up.railway.app
+# Ejemplo Local: http://127.0.0.1:8090
+```
 
-El proyecto está listo para ser desplegado en plataformas como Netlify, Vercel o GitHub Pages. Incluye un archivo `public/_redirects` para una configuración sencilla en Netlify.
+### 3. Configuración de Base de Datos (PocketBase)
+Este proyecto incluye el esquema completo de la base de datos para una configuración automática.
 
-## 🎨 Mejoras Realizadas
+1.  Accede a tu panel de administración de PocketBase (ej. `/_/`).
+2.  Ve a **Settings > Import collections**.
+3.  Carga el archivo **`pb_full_schema.json`** ubicado en la raíz de este repositorio.
+4.  Asegúrate de marcar **"Merge"** si ya tienes datos, o limpia la DB antes de importar.
 
-Este proyecto ha sido mejorado con las siguientes características:
+### 4. Ejecutar
+```bash
+npm run dev
+```
+La aplicación estará disponible en `http://localhost:5173`.
 
-- **Mejoras de SEO**:
+---
 
-  - Se ha optimizado el `index.html` con meta-tags para título, descripción y palabras clave.
-  - Se han añadido `sitemap.xml` y `robots.txt` para mejorar la indexación.
-  - Se ha incorporado texto y atributos `alt` ricos en palabras clave en todo el sitio.
+## 📂 Estructura del Proyecto
 
-- **Mejoras Visuales y de UX**:
+```
+project/
+├── public/              # Assets estáticos (imágenes, robots.txt, sitemap)
+├── src/
+│   ├── api/             # Capa de comunicación con PocketBase
+│   ├── components/      # Componentes UI reutilizables (Botones, Cards, SEO)
+│   ├── hooks/           # Lógica de negocio encapsulada (Custom Hooks)
+│   ├── pages/           # Vistas principales (Públicas y Admin)
+│   │   └── admin/       # Módulos del Panel de Control
+│   ├── services/        # Configuración del cliente PocketBase
+│   └── types/           # Definiciones de TypeScript (Interfaces)
+└── index.html           # Entrada de la aplicación
+```
 
-  - Se han añadido animaciones y transiciones en toda la web utilizando `framer-motion`.
-  - Se ha mejorado el diseño y el espaciado en todas las páginas para una apariencia más limpia y profesional.
-  - Los botones y tarjetas ahora tienen efectos de hover y foco para una mejor interactividad.
-  - Se ha implementado un componente `ScrollToTop` que desplaza la vista al inicio de la página en cada navegación.
+---
 
-- **Nuevas Funcionalidades**:
-  - **Exportación de Datos**: Se ha añadido la capacidad de exportar datos de citas, mensajes y pagos a PDF o TXT en el panel de administración.
-  - **Footer Actualizado**: El pie de página ahora incluye los créditos de DunaTech.
+## 🔒 Seguridad y Roles
+
+El sistema implementa **API Rules** de PocketBase para proteger los datos:
+*   **Público**: Lectura de Servicios, Blog, Testimonios y Galería.
+*   **Privado (Auth)**: Creación de Citas y Mensajes.
+*   **Admin/Superuser**: Gestión total de Pagos, Usuarios y Edición de Contenido.
+
+---
+
+## 📄 Licencia
+
+Este proyecto es propiedad de **Maestra Laura Karol** y desarrollado por **DunaTech**. Todos los derechos reservados.

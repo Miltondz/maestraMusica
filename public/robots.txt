@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /api/
 
-Sitemap: /sitemap.xml
+Sitemap: https://www.maestralaurakarol.com/sitemap.xml

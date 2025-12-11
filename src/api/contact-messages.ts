@@ -17,7 +17,7 @@ export const contactMessagesApi = {
   async getUnread(): Promise<ContactMessage[]> {
     const records = await pb.collection('contact_messages').getFullList({
       filter: 'is_read = false',
-      sort: '-created',
+      // sort: '-created',
     })
     return records.map(mapRecord<ContactMessage>)
   },

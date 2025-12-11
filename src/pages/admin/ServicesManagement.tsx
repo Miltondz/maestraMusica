@@ -249,8 +249,12 @@ export function ServicesManagement() {
                       <p className="text-slate-600 mb-3 line-clamp-2">{service.description}</p>
                     )}
                     {service.image_url && (
-                      <div className="text-sm text-slate-500">
-                        <span>Imagen: {service.image_url}</span>
+                      <div className="mt-3">
+                        <img 
+                          src={service.image_url} 
+                          alt={service.name}
+                          className="w-24 h-24 object-cover rounded-md border border-slate-200"
+                        />
                       </div>
                     )}
                   </div>

@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import ScrollToTop from './components/ScrollToTop';
 
 // Public Pages
@@ -27,31 +28,33 @@ function App() {
         <ScrollToTop />
         <div className="min-h-screen flex flex-col">
           <Header />
-          <main className="flex-1">
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<HomePage />} />
-              <Route path="/servicios" element={<ServicesPage />} />
-              <Route path="/acerca-de" element={<AboutPage />} />
-              <Route path="/reservar" element={<BookingPage />} />
-              <Route path="/blog" element={<BlogPage />} />
-              <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/galeria" element={<GalleryPage />} />
-              <Route path="/contacto" element={<ContactPage />} />
-              <Route path="/login" element={<LoginPage />} />
+          <ErrorBoundary>
+            <main className="flex-1">
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<HomePage />} />
+                <Route path="/servicios" element={<ServicesPage />} />
+                <Route path="/acerca-de" element={<AboutPage />} />
+                <Route path="/reservar" element={<BookingPage />} />
+                <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
+                <Route path="/galeria" element={<GalleryPage />} />
+                <Route path="/contacto" element={<ContactPage />} />
+                <Route path="/login" element={<LoginPage />} />
 
-              {/* Protected Admin Routes */}
-              <Route path="/admin/*" element={
-                <ProtectedRoute>
-                  <AdminLayout />
-                </ProtectedRoute>
-              } />
+                {/* Protected Admin Routes */}
+                <Route path="/admin/*" element={
+                  <ProtectedRoute>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                } />
 
-              {/* Catch all route - redirect to home */}
-              <Route path="*" element={<HomePage />} />
-            </Routes>
-          </main>
-          <Footer />
+                {/* Catch all route - redirect to home */}
+                <Route path="*" element={<HomePage />} />
+              </Routes>
+            </main>
+            <Footer />
+          </ErrorBoundary>
         </div>
       </BrowserRouter>
     </AuthProvider>

@@ -7,6 +7,7 @@ import { formatDate } from '../lib/utils';
 import { blogApi } from '../api/blog';
 import type { BlogPost as BlogPostType } from '../types';
 import { motion } from 'framer-motion';
+import { SEO } from '../components/SEO';
 
 export function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
@@ -26,7 +27,6 @@ export function BlogPost() {
         const fetchedPost = await blogApi.getBySlug(slug);
         if (fetchedPost) {
           setPost(fetchedPost);
-          document.title = `${fetchedPost.title} - Maestra de Música`;
         } else {
           setError('Publicación no encontrada.');
         }
@@ -37,10 +37,6 @@ export function BlogPost() {
       }
     };
     fetchPost();
-
-    return () => {
-      document.title = 'Maestra de Música - Clases de Música Online y Presenciales'; // Reset title on unmount
-    }
   }, [slug]);
 
   const formatContent = (content: string) => {
@@ -94,8 +90,38 @@ export function BlogPost() {
     );
   }
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "image": post.image_url,
+    "datePublished": post.published_date,
+    "dateModified": post.updated_at || post.published_date,
+    "author": {
+      "@type": "Person",
+      "name": "Laura Díaz"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Maestra de Música - Laura Karol",
+      "logo": {
+        "@type": "ImageObject",
+        "url": window.location.origin + "/logo.png"
+      }
+    },
+    "description": post.excerpt || post.content.substring(0, 160)
+  };
+
   return (
     <div className="bg-white">
+      <SEO 
+        title={post.title}
+        description={post.excerpt || post.content.substring(0, 155)}
+        image={post.image_url || undefined}
+        type="article"
+        schema={articleSchema}
+      />
+
       {/* Header Section */}
       <header className="relative py-28 lg:py-40 px-4 bg-slate-800 text-white">
         <img 

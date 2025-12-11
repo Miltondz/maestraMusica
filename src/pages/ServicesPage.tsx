@@ -8,6 +8,8 @@ import { formatPrice } from '../lib/utils';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
+import { SEO } from '../components/SEO';
+
 const Section = ({ children, className }: { children: React.ReactNode, className?: string }) => (
   <motion.section
     initial={{ opacity: 0, y: 50 }}
@@ -45,8 +47,34 @@ export function ServicesPage() {
     );
   }
 
+  const servicesSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": services.map((service, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "item": {
+        "@type": "Service",
+        "name": service.name,
+        "description": service.description,
+        "offers": {
+          "@type": "Offer",
+          "price": service.price,
+          "priceCurrency": "USD"
+        }
+      }
+    }))
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      <SEO 
+        title="Clases de Piano, Guitarra y Canto | Servicios de Música"
+        description="Explora nuestra oferta de clases de música online y presenciales. Piano, guitarra, canto, teoría musical y más. Precios competitivos y horarios flexibles."
+        keywords={['precios clases musica', 'costo clases piano', 'clases guitarra online', 'clases canto venezuela']}
+        schema={servicesSchema}
+      />
+
       {/* Header Section */}
       <section className="py-20 sm:py-28 bg-gradient-to-br from-amber-500 to-amber-600 px-4 sm:px-6 lg:px-8 text-white">
         <div className="max-w-4xl mx-auto text-center">

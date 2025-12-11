@@ -15,7 +15,7 @@ export function createPocketBaseApi<T>(collectionName: string) {
   return {
     async getAll(): Promise<T[]> {
       const records = await pb.collection(collectionName).getFullList({
-        sort: '-created',
+        // sort: '-created', // Deshabilitado temporalmente por error 400 en DB vacía
       })
       return records.map(mapRecord<T>)
     },

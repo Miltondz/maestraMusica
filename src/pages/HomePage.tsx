@@ -11,6 +11,7 @@ import { formatPrice } from '../lib/utils';
 import { BlogCarousel } from '../components/BlogCarousel';
 import { Spinner } from '../components/Spinner';
 import { motion } from 'framer-motion';
+import { SEO } from '../components/SEO';
 
 const Section = ({ children, className }: { children: React.ReactNode, className?: string }) => (
   <motion.section
@@ -38,8 +39,47 @@ export function HomePage() {
     return <div className="min-h-screen flex items-center justify-center"><Spinner size="lg" /></div>;
   }
 
+  const siteSchema = {
+    "@context": "https://schema.org",
+    "@type": "MusicSchool",
+    "name": "Maestra de Música - Laura Karol",
+    "description": content.home_hero_subtitle || 'Clases de música online y presenciales en Venezuela.',
+    "url": window.location.origin,
+    "founder": {
+      "@type": "Person",
+      "name": "Laura Karol",
+      "jobTitle": "Maestra de Música"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Punto Fijo",
+      "addressRegion": "Falcón",
+      "addressCountry": "VE"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Clases de Música",
+      "itemListElement": services.map(service => ({
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": service.name,
+          "description": service.description
+        }
+      }))
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50">
+      <SEO 
+        title="Clases de Música Online y Presenciales | Laura Karol"
+        description="Aprende piano, guitarra, canto y teoría musical con Laura Karol. Clases personalizadas en Falcón, Venezuela y online para todo el mundo."
+        keywords={['clases de musica', 'piano', 'guitarra', 'canto', 'venezuela', 'online', 'punto fijo']}
+        schema={siteSchema}
+        image="/images/main_hero.jpeg"
+      />
+
       {/* Hero Section */}
       <section
         className="relative py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-900 to-slate-800 overflow-hidden"

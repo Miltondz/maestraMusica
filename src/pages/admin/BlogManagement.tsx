@@ -378,8 +378,12 @@ Separa los párrafos con dos saltos de línea."
                     </p>
                     
                     {post.image_url && (
-                      <div className="text-sm text-slate-500">
-                        <span>Imagen destacada: {post.image_url}</span>
+                      <div className="mt-2">
+                         <img 
+                           src={post.image_url} 
+                           alt={post.title}
+                           className="w-full h-32 object-cover rounded-md border border-slate-200"
+                         />
                       </div>
                     )}
                   </div>
