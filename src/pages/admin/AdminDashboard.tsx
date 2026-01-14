@@ -147,7 +147,11 @@ function AdminDashboard() {
                     )}
                   </div>
                   <p className="text-sm text-slate-600 mt-1">
-                    {item.name === 'Citas' ? `${item.count} total` : `${item.count} elementos`}
+                    {item.name === 'Gestión de Contenido'
+                      ? 'Configuración'
+                      : item.name === 'Citas'
+                        ? `${item.count} total`
+                        : `${item.count} elementos`}
                   </p>
                 </div>
                 <item.icon className="w-8 h-8 text-amber-600" />
