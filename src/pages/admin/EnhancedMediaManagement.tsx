@@ -194,8 +194,7 @@ export function EnhancedMediaManagement() {
       const submitData = {
         ...formData,
         tags: tagsArray,
-        thumbnail_url: formData.thumbnail_url || urlPreview || '',
-        updated_at: new Date().toISOString()
+        thumbnail_url: formData.thumbnail_url || urlPreview || ''
       }
 
       if (editingItem) {
@@ -376,8 +375,8 @@ export function EnhancedMediaManagement() {
                             type="button"
                             onClick={() => handleMediaTypeChange(type.value)}
                             className={`p-4 border-2 rounded-lg text-center transition-colors ${formData.media_type === type.value
-                                ? 'border-amber-500 bg-amber-50 text-amber-700'
-                                : 'border-slate-200 hover:border-slate-300'
+                              ? 'border-amber-500 bg-amber-50 text-amber-700'
+                              : 'border-slate-200 hover:border-slate-300'
                               }`}
                           >
                             <IconComponent className="w-8 h-8 mx-auto mb-2" />
