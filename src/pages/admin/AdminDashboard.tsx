@@ -16,7 +16,7 @@ import {
 import { Card, CardContent, CardHeader } from '../../components/Card'
 import { Button } from '../../components/Button'
 import { Spinner } from '../../components/Spinner'
-import { useServices, useTestimonials, useBlogPosts, useAppointments, usePayments } from '../../hooks'
+import { useServices, useTestimonials, useBlogPosts, useAppointments, usePayments, useMediaGallery } from '../../hooks'
 import { useContactMessages, useUnreadMessages } from '../../hooks/useContactMessages'
 
 export { AdminDashboard }
@@ -27,10 +27,10 @@ function AdminDashboard() {
   const { blogPosts, loading: blogLoading, error: blogError } = useBlogPosts()
   const { unreadMessages, loading: messagesLoading, error: messagesError } = useUnreadMessages()
   const { appointments, loading: appointmentsLoading } = useAppointments()
+  const { mediaItems, loading: mediaLoading } = useMediaGallery()
   const { stats: paymentsStatsData, loading: paymentsLoading } = usePayments()
 
-  // Static media count placeholder until media hook is updated or used
-  const mediaCount = 0
+  const mediaCount = mediaItems ? mediaItems.length : 0
 
   const appointmentsStats = {
     total: appointments.length,

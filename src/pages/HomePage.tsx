@@ -33,7 +33,7 @@ export function HomePage() {
 
   const featuredServices = services.slice(0, 3);
   const featuredTestimonials = testimonials.slice(0, 3);
-  const featuredPhotos = featuredItems.filter(item => item.is_featured && item.media_type === 'photo').slice(0, 2);
+  const featuredMedia = featuredItems.filter(item => item.is_featured).slice(0, 2);
 
   if (contentLoading) {
     return <div className="min-h-screen flex items-center justify-center"><Spinner size="lg" /></div>;
@@ -282,7 +282,7 @@ export function HomePage() {
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center text-white">
           {mediaLoading ? (
             <div className="flex justify-center lg:col-span-2"><Spinner size="lg" /></div>
-          ) : featuredPhotos.length > 0 ? (
+          ) : featuredMedia.length > 0 ? (
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -290,7 +290,7 @@ export function HomePage() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
               className="grid grid-cols-2 gap-4"
             >
-              {featuredPhotos.map((item) => (
+              {featuredMedia.map((item) => (
                 <div key={item._id} className="relative overflow-hidden rounded-lg shadow-lg aspect-video">
                   <img
                     src={(item as any).thumbnail_url || item.media_url}
