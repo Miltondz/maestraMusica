@@ -12,8 +12,14 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (user) {
+      navigate('/admin');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +27,7 @@ export function LoginPage() {
     setError(null);
     try {
       await signIn(email, password);
-      navigate('/admin');
+      // Navigation is handled by useEffect
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error de inicio de sesión. Verifica tus credenciales.');
     } finally {
@@ -30,7 +36,7 @@ export function LoginPage() {
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen flex items-center justify-center bg-slate-100 px-4 sm:px-6 lg:px-8"
       style={{ backgroundImage: 'url(/images/main_header.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
@@ -89,7 +95,7 @@ export function LoginPage() {
               </div>
 
               {error && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="p-3 bg-red-100 border border-red-300 rounded-lg flex items-center text-red-800 text-sm"
