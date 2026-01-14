@@ -78,6 +78,7 @@ El proyecto está optimizado para desplegarse fácilmente.
 1.  **Frontend**: Vercel, Netlify o cualquier host de estáticos.
     *   Comando de build: `npm run build`
     *   Directorio de salida: `dist`
+    *   **IMPORTANTE**: Debes agregar la variable de entorno `VITE_CONVEX_URL` en el panel de configuración de tu hosting. Puedes encontrar este valor en tu archivo `.env.local`.
 2.  **Backend**: Convex (gestionado automáticamente).
     *   Asegúrate de configurar las variables de entorno en tu dashboard de Convex (Production).
 
