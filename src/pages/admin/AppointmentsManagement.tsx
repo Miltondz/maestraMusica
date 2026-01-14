@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Calendar, Clock, User, Mail, CheckCircle, XCircle, AlertCircle, Filter, Download } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { Spinner } from '../../components/Spinner';
-import { appointmentsApi } from '../../api/appointments';
-import { servicesApi } from '../../api/services';
+import { useAppointments, useServices } from '../../hooks';
 import { formatDate, formatTime, formatPrice } from '../../lib/utils';
 import type { Appointment, Service } from '../../types';
 import jsPDF from 'jspdf';
@@ -13,34 +12,14 @@ import autoTable from 'jspdf-autotable';
 type FilterStatus = 'all' | 'pending' | 'confirmed' | 'cancelled';
 
 export function AppointmentsManagement() {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { appointments, loading: appLoading, error, updateStatus, deleteAppointment } = useAppointments();
+  const { services, loading: servicesLoading } = useServices();
+
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const [appointmentsData, servicesData] = await Promise.all([
-        appointmentsApi.getAll(),
-        servicesApi.getAll(),
-      ]);
-      setAppointments(appointmentsData);
-      setServices(servicesData);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ocurrió un error');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loading = appLoading || servicesLoading;
 
   const handleStatusUpdate = async (appointmentId: string, status: 'confirmed' | 'cancelled') => {
     const actionVerb = status === 'confirmed' ? 'aceptar' : 'cancelar';
@@ -48,8 +27,7 @@ export function AppointmentsManagement() {
 
     setUpdatingStatus(appointmentId);
     try {
-      await appointmentsApi.updateStatus(appointmentId, status);
-      await loadData(); // Refresh data
+      await updateStatus({ id: appointmentId as any, status });
     } catch (error) {
       alert('Error al actualizar la cita: ' + (error instanceof Error ? error.message : 'Error desconocido'));
     } finally {
@@ -61,8 +39,7 @@ export function AppointmentsManagement() {
     if (!confirm('¿Estás seguro de que quieres eliminar esta cita?')) return;
 
     try {
-      await appointmentsApi.delete(appointmentId);
-      await loadData(); // Refresh data
+      await deleteAppointment({ id: appointmentId as any });
     } catch (error) {
       alert('Error al eliminar la cita: ' + (error instanceof Error ? error.message : 'Error desconocido'));
     }
@@ -70,13 +47,13 @@ export function AppointmentsManagement() {
 
   const getServiceName = (serviceId: string | null) => {
     if (!serviceId) return 'Servicio Desconocido';
-    const service = services.find(s => s.id === serviceId);
+    const service = services.find(s => s._id === serviceId);
     return service ? service.name : 'Servicio Desconocido';
   };
 
   const getServicePrice = (serviceId: string | null) => {
     if (!serviceId) return 0;
-    const service = services.find(s => s.id === serviceId);
+    const service = services.find(s => s._id === serviceId);
     return service ? service.price : 0;
   };
 
@@ -186,7 +163,7 @@ export function AppointmentsManagement() {
         <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-slate-800 mb-2">Error al cargar las citas</h3>
         <p className="text-slate-600 mb-4">{error}</p>
-        <Button onClick={loadData}>Intentar de nuevo</Button>
+        <Button onClick={() => window.location.reload()}>Recargar página</Button>
       </div>
     );
   }
@@ -281,7 +258,7 @@ export function AppointmentsManagement() {
           </Card>
         ) : (
           filteredAppointments.map((appointment) => (
-            <Card key={appointment.id} className="hover:shadow-md transition-shadow">
+            <Card key={appointment._id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
@@ -339,11 +316,11 @@ export function AppointmentsManagement() {
                       <>
                         <Button
                           size="sm"
-                          onClick={() => handleStatusUpdate(appointment.id, 'confirmed')}
-                          disabled={updatingStatus === appointment.id}
+                          onClick={() => handleStatusUpdate(appointment._id, 'confirmed')}
+                          disabled={updatingStatus === appointment._id}
                           className="bg-green-600 hover:bg-green-700 text-white"
                         >
-                          {updatingStatus === appointment.id ? (
+                          {updatingStatus === appointment._id ? (
                             <Spinner size="sm" />
                           ) : (
                             <>
@@ -355,8 +332,8 @@ export function AppointmentsManagement() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleStatusUpdate(appointment.id, 'cancelled')}
-                          disabled={updatingStatus === appointment.id}
+                          onClick={() => handleStatusUpdate(appointment._id, 'cancelled')}
+                          disabled={updatingStatus === appointment._id}
                           className="border-red-600 text-red-600 hover:bg-red-50"
                         >
                           <XCircle className="w-4 h-4 mr-1" />
@@ -376,7 +353,7 @@ export function AppointmentsManagement() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleDelete(appointment.id)}
+                      onClick={() => handleDelete(appointment._id)}
                       className="border-red-600 text-red-600 hover:bg-red-50"
                     >
                       Eliminar
@@ -385,7 +362,7 @@ export function AppointmentsManagement() {
                 </div>
               </CardContent>
             </Card>
-          )) 
+          ))
         )}
       </div>
 

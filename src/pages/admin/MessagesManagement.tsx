@@ -19,16 +19,16 @@ function MessagesManagement() {
   const [respondingTo, setRespondingTo] = useState<ContactMessage | null>(null);
   const [adminResponseText, setAdminResponseText] = useState('');
   const [submittingResponse, setSubmittingResponse] = useState(false);
-  const [deletingMessage, setDeletingMessage] = useState<string | null>(null);
+  const [deletingMessage, setDeletingMessage] = useState<any>(null);
 
   const filteredMessages = messages.filter(message => {
     if (filter === 'all') return true;
     return filter === 'read' ? message.is_read : !message.is_read;
   });
 
-  const handleMarkAsRead = async (id: string) => {
+  const handleMarkAsRead = async (_id: any) => {
     try {
-      await markAsRead(id);
+      await markAsRead(_id);
     } catch (err) {
       alert('Error al marcar mensaje como leído: ' + (err instanceof Error ? err.message : 'Error desconocido'));
     }
@@ -44,7 +44,7 @@ function MessagesManagement() {
 
     setSubmittingResponse(true);
     try {
-      await addResponse(respondingTo.id, adminResponseText.trim());
+      await addResponse(respondingTo._id, adminResponseText.trim());
       setRespondingTo(null);
       setAdminResponseText('');
     } catch (err) {
@@ -54,12 +54,12 @@ function MessagesManagement() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (_id: any) => {
     if (!confirm('¿Estás seguro de que quieres eliminar este mensaje?')) return;
 
-    setDeletingMessage(id);
+    setDeletingMessage(_id);
     try {
-      await removeMessage(id);
+      await removeMessage(_id);
     } catch (err) {
       alert('Error al eliminar mensaje: ' + (err instanceof Error ? err.message : 'Error desconocido'));
     } finally {
@@ -83,7 +83,7 @@ function MessagesManagement() {
       `Teléfono: ${msg.phone || 'N/D'}
 ` +
       `Tipo de consulta: ${msg.inquiry_type}\n` +
-      `Fecha: ${formatDate(msg.created_at)}\n` +
+      `Fecha: ${formatDate(new Date(msg._creationTime))}\n` +
       `Leído: ${msg.is_read ? 'Sí' : 'No'}\n` +
       `Mensaje: ${msg.message}\n` +
       `Respuesta: ${msg.admin_response || 'N/D'}
@@ -113,7 +113,7 @@ function MessagesManagement() {
         msg.email,
         msg.phone || 'N/D',
         msg.inquiry_type,
-        formatDate(msg.created_at),
+        formatDate(new Date(msg._creationTime)),
         msg.is_read ? 'Sí' : 'No',
         msg.message,
         msg.admin_response || 'N/D',
@@ -245,7 +245,7 @@ function MessagesManagement() {
           </Card>
         ) : (
           filteredMessages.map((message) => (
-            <Card key={message.id} className="hover:shadow-md transition-shadow">
+            <Card key={message._id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
@@ -284,7 +284,7 @@ function MessagesManagement() {
                       <div className="space-y-2">
                         <div className="flex items-center">
                           <Clock className="w-4 h-4 mr-2 text-slate-400" />
-                          <span>Recibido: {formatDate(message.created_at)}</span>
+                          <span>Recibido: {formatDate(new Date(message._creationTime))}</span>
                         </div>
                       </div>
                     </div>
@@ -309,7 +309,7 @@ function MessagesManagement() {
                     {!message.is_read && (
                       <Button
                         size="sm"
-                        onClick={() => handleMarkAsRead(message.id)}
+                        onClick={() => handleMarkAsRead(message._id)}
                         className="bg-amber-600 hover:bg-amber-700 text-white"
                       >
                         <CheckCircle className="w-4 h-4 mr-1" />
@@ -317,9 +317,9 @@ function MessagesManagement() {
                       </Button>
                     )}
                     <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleRespondClick(message)}
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleRespondClick(message)}
                     >
                       <Reply className="w-4 h-4 mr-1" />
                       Responder
@@ -327,11 +327,11 @@ function MessagesManagement() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleDelete(message.id)}
-                      disabled={deletingMessage === message.id}
+                      onClick={() => handleDelete(message._id)}
+                      disabled={deletingMessage === message._id}
                       className="border-red-600 text-red-600 hover:bg-red-50"
                     >
-                      {deletingMessage === message.id ? (
+                      {deletingMessage === message._id ? (
                         <Spinner size="sm" />
                       ) : (
                         <Trash2 className="w-4 h-4" />
@@ -341,7 +341,7 @@ function MessagesManagement() {
                 </div>
               </CardContent>
             </Card>
-          )) 
+          ))
         )}
       </div>
 

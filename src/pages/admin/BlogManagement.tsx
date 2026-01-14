@@ -5,12 +5,11 @@ import { Button } from '../../components/Button'
 import { Spinner } from '../../components/Spinner'
 import { ImageUpload } from '../../components/ImageUpload'
 import { useBlogPosts } from '../../hooks/useBlogPosts'
-import { blogApi } from '../../api/blog'
 import { formatDate } from '../../lib/utils'
 import type { BlogPost, CreateBlogPostData } from '../../types'
 
 export function BlogManagement() {
-  const { blogPosts, loading, error, refreshBlogPosts } = useBlogPosts()
+  const { blogPosts, loading, error, createBlogPost, updateBlogPost, deleteBlogPost } = useBlogPosts()
   const [editingPost, setEditingPost] = useState<BlogPost | null>(null)
   const [isCreating, setIsCreating] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
@@ -91,20 +90,20 @@ export function BlogManagement() {
 
     try {
       const submitData = {
-        ...formData,
+        title: formData.title,
         slug: formData.slug || generateSlug(formData.title),
+        content: formData.content,
         published_date: new Date(formData.published_date).toISOString(),
-        image_url: formData.image_url || null,
-        excerpt: formData.excerpt || null,
-        author: formData.author || null
+        image_url: formData.image_url || undefined,
+        excerpt: formData.excerpt || undefined,
+        author: formData.author || undefined
       }
-      
+
       if (editingPost) {
-        await blogApi.update(editingPost.id, submitData)
+        await updateBlogPost({ id: editingPost._id as any, ...submitData })
       } else {
-        await blogApi.create(submitData)
+        await createBlogPost(submitData)
       }
-      refreshBlogPosts()
       handleCancel()
     } catch (error) {
       setFormError(error instanceof Error ? error.message : 'Ocurrió un error')
@@ -113,13 +112,12 @@ export function BlogManagement() {
     }
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (_id: any) => {
     if (!confirm('¿Estás seguro de que quieres eliminar esta publicación del blog?')) return
-    
-    setDeleting(id)
+
+    setDeleting(_id)
     try {
-      await blogApi.delete(id)
-      refreshBlogPosts()
+      await deleteBlogPost({ id: _id as any })
     } catch (error) {
       alert('Error al eliminar la publicación: ' + (error instanceof Error ? error.message : 'Error desconocido'))
     } finally {
@@ -169,7 +167,7 @@ export function BlogManagement() {
         <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-slate-800 mb-2">Error al cargar las publicaciones</h3>
         <p className="text-slate-600 mb-4">{error}</p>
-        <Button onClick={refreshBlogPosts}>Intentar de nuevo</Button>
+        <Button onClick={() => window.location.reload()}>Intentar de nuevo</Button>
       </div>
     )
   }
@@ -316,8 +314,8 @@ Separa los párrafos con dos saltos de línea."
               <div className="prose prose-lg max-w-none">
                 <h1 className="text-2xl font-bold text-slate-800 mb-4">{formData.title}</h1>
                 {formData.image_url && (
-                  <img 
-                    src={formData.image_url} 
+                  <img
+                    src={formData.image_url}
                     alt={formData.title}
                     className="w-full h-64 object-cover rounded-lg mb-6"
                   />
@@ -350,7 +348,7 @@ Separa los párrafos con dos saltos de línea."
           </Card>
         ) : (
           blogPosts.map((post) => (
-            <Card key={post.id}>
+            <Card key={post._id}>
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
@@ -362,7 +360,7 @@ Separa los párrafos con dos saltos de línea."
                         /{post.slug}
                       </span>
                     </div>
-                    
+
                     <div className="flex items-center gap-4 text-sm text-slate-600 mb-3">
                       <div className="flex items-center">
                         <Calendar className="w-4 h-4 mr-1" />
@@ -372,22 +370,22 @@ Separa los párrafos con dos saltos de línea."
                         {Math.ceil(post.content.length / 1000)} min de lectura
                       </div>
                     </div>
-                    
+
                     <p className="text-slate-600 line-clamp-2 mb-3">
                       {post.content.substring(0, 200).replace(/\*\*/g, '')}...
                     </p>
-                    
+
                     {post.image_url && (
                       <div className="mt-2">
-                         <img 
-                           src={post.image_url} 
-                           alt={post.title}
-                           className="w-full h-32 object-cover rounded-md border border-slate-200"
-                         />
+                        <img
+                          src={post.image_url}
+                          alt={post.title}
+                          className="w-full h-32 object-cover rounded-md border border-slate-200"
+                        />
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="flex gap-2 ml-4">
                     <Button
                       variant="outline"
@@ -408,12 +406,12 @@ Separa los párrafos con dos saltos de línea."
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDelete(post.id)}
-                      disabled={deleting === post.id}
+                      onClick={() => handleDelete(post._id)}
+                      disabled={deleting === post._id}
                       className="text-red-600 border-red-600 hover:bg-red-50"
                       title="Eliminar Publicación"
                     >
-                      {deleting === post.id ? (
+                      {deleting === post._id ? (
                         <Spinner size="sm" />
                       ) : (
                         <Trash2 className="w-4 h-4" />

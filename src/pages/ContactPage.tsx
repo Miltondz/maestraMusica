@@ -31,7 +31,7 @@ const Section = ({ children, className }: { children: React.ReactNode, className
 
 export function ContactPage() {
   const { createMessage } = useContactMessages();
-  const { content, loading: contentLoading } = useSiteContent();
+  const { contentMap: content, loading: contentLoading } = useSiteContent();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
@@ -87,7 +87,7 @@ export function ContactPage() {
     <div className="bg-slate-50">
       {/* Header */}
       <header className="py-20 sm:py-28 bg-gradient-to-br from-slate-800 to-slate-900 text-white text-center px-4">
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -95,7 +95,7 @@ export function ContactPage() {
         >
           {content.contact_hero_title || 'Ponte en Contacto'}
         </motion.h1>
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
@@ -138,9 +138,9 @@ export function ContactPage() {
             <Card>
               <CardContent className="p-6 sm:p-8 md:p-10">
                 <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-6">{content.contact_form_title || 'Envíame un Mensaje'}</h2>
-                
+
                 {isSubmitted && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-6 p-4 bg-green-100 border border-green-300 rounded-lg flex items-center space-x-3 text-green-800"
@@ -154,7 +154,7 @@ export function ContactPage() {
                 )}
 
                 {submitError && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-6 p-4 bg-red-100 border border-red-300 rounded-lg flex items-center space-x-3 text-red-800"

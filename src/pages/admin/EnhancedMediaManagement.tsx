@@ -66,7 +66,7 @@ export function EnhancedMediaManagement() {
     }
 
     setUrlError(null)
-    
+
     switch (mediaType) {
       case 'youtube':
         if (isValidYouTubeUrl(url)) {
@@ -107,7 +107,7 @@ export function EnhancedMediaManagement() {
     }
 
     setUrlError(null)
-    
+
     if (mediaType === 'youtube' && isYouTubeEmbed(code)) {
       const videoId = extractYouTubeIdFromEmbed(code)
       if (videoId) {
@@ -137,7 +137,7 @@ export function EnhancedMediaManagement() {
   const handleUrlChange = (url: string) => {
     setFormData({ ...formData, media_url: url })
     validateUrl(url, formData.media_type)
-    
+
     // Auto-generate title for YouTube videos
     if (formData.media_type === 'youtube' && isValidYouTubeUrl(url) && !formData.title) {
       // You could integrate YouTube API here to fetch the actual title
@@ -154,7 +154,7 @@ export function EnhancedMediaManagement() {
 
   const handleEmbedPaste = (code: string) => {
     setEmbedCode(code)
-    
+
     // Auto-detect embed type and process
     const processed = processEmbedCode(code)
     if (processed) {
@@ -178,28 +178,28 @@ export function EnhancedMediaManagement() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (urlError) {
       return
     }
-    
+
     setSubmitting(true)
 
     try {
       // Convert comma-separated tags string to array
-      const tagsArray = formData.tags.trim() 
+      const tagsArray = formData.tags.trim()
         ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
         : []
-      
+
       const submitData = {
         ...formData,
         tags: tagsArray,
         thumbnail_url: formData.thumbnail_url || urlPreview || '',
         updated_at: new Date().toISOString()
       }
-      
+
       if (editingItem) {
-        await editMediaItem(editingItem.id, submitData)
+        await editMediaItem(editingItem._id, submitData)
       } else {
         await addMediaItem(submitData)
       }
@@ -268,7 +268,7 @@ export function EnhancedMediaManagement() {
         />
       )
     }
-    
+
     if (item.media_type === 'youtube') {
       const videoId = extractYouTubeId(item.media_url)
       return (
@@ -284,7 +284,7 @@ export function EnhancedMediaManagement() {
         </div>
       )
     }
-    
+
     const IconComponent = getMediaIcon(item.media_type)
     return (
       <div className="w-full h-32 bg-gray-100 flex items-center justify-center">
@@ -335,24 +335,22 @@ export function EnhancedMediaManagement() {
                   <X className="w-4 h-4" />
                 </Button>
               </div>
-              
+
               {/* Tabs */}
               <div className="flex space-x-1 bg-slate-100 p-1 rounded-lg mt-4">
                 <button
                   type="button"
                   onClick={() => setActiveTab('form')}
-                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                    activeTab === 'form' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'
-                  }`}
+                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'form' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'
+                    }`}
                 >
                   Formulario
                 </button>
                 <button
                   type="button"
                   onClick={() => setActiveTab('preview')}
-                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                    activeTab === 'preview' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'
-                  }`}
+                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${activeTab === 'preview' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'
+                    }`}
                   disabled={!formData.title || !formData.media_url}
                 >
                   <Eye className="w-4 h-4 mr-1 inline" />
@@ -360,7 +358,7 @@ export function EnhancedMediaManagement() {
                 </button>
               </div>
             </CardHeader>
-            
+
             <CardContent>
               {activeTab === 'form' ? (
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -377,11 +375,10 @@ export function EnhancedMediaManagement() {
                             key={type.value}
                             type="button"
                             onClick={() => handleMediaTypeChange(type.value)}
-                            className={`p-4 border-2 rounded-lg text-center transition-colors ${
-                              formData.media_type === type.value
+                            className={`p-4 border-2 rounded-lg text-center transition-colors ${formData.media_type === type.value
                                 ? 'border-amber-500 bg-amber-50 text-amber-700'
                                 : 'border-slate-200 hover:border-slate-300'
-                            }`}
+                              }`}
                           >
                             <IconComponent className="w-8 h-8 mx-auto mb-2" />
                             <div className="font-medium">{type.label}</div>
@@ -399,7 +396,7 @@ export function EnhancedMediaManagement() {
                       {formData.media_type === 'instagram' && 'URL o Código de Instagram *'}
                       {(formData.media_type === 'photo' || formData.media_type === 'video') && 'Imagen/Video *'}
                     </label>
-                    
+
                     {(formData.media_type === 'photo' || formData.media_type === 'video') ? (
                       <div className="space-y-3">
                         <ImageUpload
@@ -421,18 +418,16 @@ export function EnhancedMediaManagement() {
                           <button
                             type="button"
                             onClick={() => setInputMode('url')}
-                            className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                              inputMode === 'url' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'
-                            }`}
+                            className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${inputMode === 'url' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'
+                              }`}
                           >
                             URL Directa
                           </button>
                           <button
                             type="button"
                             onClick={() => setInputMode('embed')}
-                            className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                              inputMode === 'embed' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'
-                            }`}
+                            className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${inputMode === 'embed' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-800'
+                              }`}
                           >
                             Código de Inserción
                           </button>
@@ -445,13 +440,12 @@ export function EnhancedMediaManagement() {
                               required
                               value={formData.media_url}
                               onChange={(e) => handleUrlChange(e.target.value)}
-                              className={`flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 ${
-                                urlError ? 'border-red-300' : 'border-slate-300'
-                              }`}
+                              className={`flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 ${urlError ? 'border-red-300' : 'border-slate-300'
+                                }`}
                               placeholder={
                                 formData.media_type === 'youtube' ? 'https://www.youtube.com/watch?v=...' :
-                                formData.media_type === 'instagram' ? 'https://www.instagram.com/p/...' :
-                                'https://ejemplo.com/archivo.jpg'
+                                  formData.media_type === 'instagram' ? 'https://www.instagram.com/p/...' :
+                                    'https://ejemplo.com/archivo.jpg'
                               }
                             />
                             <PasteButton onPaste={handleUrlPaste} className="flex-shrink-0" />
@@ -467,11 +461,10 @@ export function EnhancedMediaManagement() {
                                   handleEmbedPaste(e.target.value)
                                 }}
                                 rows={4}
-                                className={`flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none ${
-                                  urlError ? 'border-red-300' : 'border-slate-300'
-                                }`}
+                                className={`flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none ${urlError ? 'border-red-300' : 'border-slate-300'
+                                  }`}
                                 placeholder={
-                                  formData.media_type === 'youtube' 
+                                  formData.media_type === 'youtube'
                                     ? '<iframe width="560" height="315" src="https://www.youtube.com/embed/..." frameborder="0" allowfullscreen></iframe>'
                                     : '<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/p/..." ...></blockquote>'
                                 }
@@ -485,14 +478,14 @@ export function EnhancedMediaManagement() {
                         )}
                       </div>
                     )}
-                    
+
                     {urlError && (
                       <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-red-600 text-sm flex items-center">
                         <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0" />
                         {urlError}
                       </div>
                     )}
-                    
+
                     {urlPreview && !urlError && (
                       <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded">
                         <div className="flex items-center text-green-600 text-sm mb-2">
@@ -569,11 +562,11 @@ export function EnhancedMediaManagement() {
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
                         {(formData.media_type === 'photo' || formData.media_type === 'video') ? /* Keep this conditional rendering */
-                          'Miniatura Personalizada (Opcional)' : 
+                          'Miniatura Personalizada (Opcional)' :
                           'Miniatura (Opcional)'
                         }
                       </label>
-                      
+
                       {(formData.media_type === 'photo' || formData.media_type === 'video') ? (
                         <ImageUpload
                           currentImageUrl={formData.thumbnail_url}
@@ -590,9 +583,9 @@ export function EnhancedMediaManagement() {
                             className="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                             placeholder="https://ejemplo.com/miniatura.jpg"
                           />
-                          <PasteButton 
-                            onPaste={(url) => setFormData({ ...formData, thumbnail_url: url })} 
-                            className="flex-shrink-0" 
+                          <PasteButton
+                            onPaste={(url) => setFormData({ ...formData, thumbnail_url: url })}
+                            className="flex-shrink-0"
                           />
                         </div>
                       )}
@@ -686,9 +679,9 @@ export function EnhancedMediaManagement() {
                             </div> {/* Keep this div */}
                             <h4 className="text-center font-medium text-slate-700 mb-2">{formData.title || 'Contenido de Instagram'}</h4>
                             <p className="text-center text-slate-600 text-sm mb-4">Vista previa del contenido de Instagram</p>
-                            <a 
-                              href={formData.media_url} 
-                              target="_blank" 
+                            <a
+                              href={formData.media_url}
+                              target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center justify-center bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-colors"
                             > {/* Keep this anchor tag */}
@@ -701,12 +694,12 @@ export function EnhancedMediaManagement() {
                           <div className="border rounded-lg overflow-hidden mb-4">
                             {formData.media_type === 'photo' ? (
                               <img /* Keep this img tag */
-                                src={formData.media_url} 
+                                src={formData.media_url}
                                 alt={formData.title}
                                 className="w-full max-h-80 object-contain bg-gray-50"
                               />
                             ) : (
-                              <video 
+                              <video
                                 src={formData.media_url}
                                 controls /* Keep this controls attribute */
                                 className="w-full max-h-80 object-contain bg-black"
@@ -734,14 +727,14 @@ export function EnhancedMediaManagement() {
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="flex gap-4">
                     <Button onClick={() => setActiveTab('form')} variant="outline" className="flex-1">
                       Volver al Formulario
                     </Button>
                     {formData.media_url && (
-                      <Button 
-                        onClick={() => window.open(formData.media_url, '_blank')} 
+                      <Button
+                        onClick={() => window.open(formData.media_url, '_blank')}
                         variant="outline"
                         className="flex-shrink-0"
                       >
@@ -762,7 +755,7 @@ export function EnhancedMediaManagement() {
         {mediaItems.map((item) => {
           const IconComponent = getMediaIcon(item.media_type)
           return (
-            <Card key={item.id} className="group hover:shadow-lg transition-shadow">
+            <Card key={item._id} className="group hover:shadow-lg transition-shadow">
               <div className="relative">
                 {renderMediaPreview(item)}
 
@@ -779,7 +772,7 @@ export function EnhancedMediaManagement() {
                   <IconComponent className="w-4 h-4" />
                 </div>
               </div>
-              
+
               <CardContent className="p-4">
                 <h3 className="font-semibold text-slate-800 mb-1 truncate">{item.title}</h3> {/* Keep this heading */}
                 <p className="text-sm text-slate-600 mb-2 line-clamp-2"> {/* Keep this paragraph */}
@@ -787,26 +780,26 @@ export function EnhancedMediaManagement() {
                 </p>
                 <div className="flex items-center justify-between text-xs text-slate-500 mb-3">
                   <span className="bg-slate-100 px-2 py-1 rounded">{item.category}</span> {/* Keep this span */}
-                  <span>{new Date(item.created_at).toLocaleDateString()}</span>
+                  <span>{new Date(item._creationTime).toLocaleDateString()}</span>
                 </div>
-                
+
                 <div className="flex gap-2">
                   <Button size="sm" variant="outline" onClick={() => handleEdit(item)} className="flex-1">
                     <Edit className="w-3 h-3 mr-1" />
                     Editar
                   </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
+                  <Button
+                    size="sm"
+                    variant="outline"
                     onClick={() => window.open(item.media_url, '_blank')}
                     className="flex-shrink-0"
                   >
                     <ExternalLink className="w-3 h-3" />
                   </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    onClick={() => handleDelete(item.id)}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleDelete(item._id)}
                     className="text-red-600 hover:text-red-700 hover:bg-red-50 flex-shrink-0"
                   >
                     <Trash2 className="w-3 h-3" />

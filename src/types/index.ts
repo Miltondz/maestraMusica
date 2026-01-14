@@ -1,88 +1,80 @@
+import { Id } from "../../convex/_generated/dataModel";
+
 export interface Service {
-  id: string
+  _id: Id<"services">
+  _creationTime: number
   name: string
-  description: string | null
+  description?: string
   price: number
   duration_minutes: number
-  image_url: string | null
-  created_at: string
-  updated_at: string
+  image_url?: string
 }
 
 export interface Testimonial {
-  id: string
+  _id: Id<"testimonials">
+  _creationTime: number
   author_name: string
   content: string
-  rating: number
-  date_created: string
-  created_at: string
-  updated_at: string
+  rating?: number
 }
 
 export interface BlogPost {
-  id: string
+  _id: Id<"blog_posts">
+  _creationTime: number
   title: string
-  slug: string | null
+  slug: string
   content: string
-  excerpt: string | null
-  published_date: string
-  author: string | null
-  image_url: string | null
-  created_at: string
-  updated_at: string
+  excerpt?: string
+  published_date?: string
+  image_url?: string
 }
 
 export interface Appointment {
-  id: string
+  _id: Id<"appointments">
+  _creationTime: number
   client_name: string
   client_email: string
-  client_phone: string | null
-  service_id: string | null
+  client_phone?: string
+  service_id: Id<"services">
   appointment_date: string
   appointment_time: string
   status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
-  notes: string | null
-  created_at: string
-  updated_at: string
+  notes?: string
 }
 
 export interface Payment {
-  id: string
-  appointment_id: string | null
+  _id: Id<"payments">
+  _creationTime: number
+  appointment_id?: Id<"appointments">
   amount: number
-  payment_date: string
+  payment_method?: string
+  payment_date?: string
   status: 'pending' | 'completed' | 'failed' | 'cancelled'
-  payment_method: string | null
-  notes: string | null
-  created_at: string
-  updated_at: string
 }
 
 export interface MediaGallery {
-  id: string
+  _id: Id<"media_gallery">
+  _creationTime: number
   title: string
-  description: string | null
+  description?: string
   media_type: 'photo' | 'video' | 'youtube' | 'instagram'
   media_url: string
-  thumbnail_url: string | null
+  thumbnail_url?: string
   category: string
-  tags: string[] | null
-  is_featured: boolean
-  created_at: string
-  updated_at: string
+  tags?: string[] | string
+  is_featured?: boolean
 }
 
 export interface ContactMessage {
-  id: string
+  _id: Id<"contact_messages">
+  _creationTime: number
   name: string
   email: string
-  phone: string | null
+  phone?: string
   message: string
   inquiry_type: string
-  is_read: boolean
-  admin_response: string | null // Ensure this is nullable
-  created_at: string
-  updated_at: string
+  is_read?: boolean
+  admin_response?: string
 }
 
 export interface CreateAppointmentData {
@@ -114,44 +106,41 @@ export interface CreateBlogPostData {
   slug?: string
   content: string
   excerpt?: string
-  author?: string
   image_url?: string
   published_date?: string
+  author?: string
 }
 
 export interface CreatePaymentData {
-  appointment_id?: string
+  appointment_id: string
   amount: number
   payment_method?: string
-  status?: 'pending' | 'completed' | 'failed' | 'cancelled'
-  notes?: string
+  status: 'pending' | 'completed' | 'failed' | 'cancelled'
 }
 
 export interface CreateMediaGalleryData {
   title: string
-  description?: string
   media_type: 'photo' | 'video' | 'youtube' | 'instagram'
   media_url: string
   thumbnail_url?: string
   category: string
-  tags?: string[]
+  tags?: string[] | string
   is_featured?: boolean
 }
 
 export interface CreateContactMessageData {
   name: string
   email: string
-  phone?: string
   message: string
-  inquiry_type: string
+  inquiry_type?: string
   is_read?: boolean
-  admin_response?: string | null
 }
 
-// Type aliases for compatibility
 export type MediaItem = MediaGallery
 
 export interface SiteContent {
+  _id: Id<"site_content">
+  _creationTime: number
   key: string;
-  value: string;
+  value: any;
 }

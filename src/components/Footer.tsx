@@ -1,10 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Music, Mail, Phone, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
+import { useConvexAuth } from "convex/react";
 import { useSiteContent } from '../hooks/useSiteContent';
 
 export function Footer() {
-  const { content } = useSiteContent();
+  const { contentMap: content } = useSiteContent();
 
   return (
     <footer className="bg-slate-800 text-white">

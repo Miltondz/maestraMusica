@@ -6,14 +6,13 @@ import { Spinner } from '../../components/Spinner'
 import { ImageUpload } from '../../components/ImageUpload'
 import { useAdminForm } from '../../hooks/useAdminForm'
 import { useServices } from '../../hooks/useServices'
-import { servicesApi } from '../../api/services'
 import { formatPrice } from '../../lib/utils'
 import type { Service, CreateServiceData } from '../../types'
 
 export function ServicesManagement() {
-  const { services, loading, error, refreshServices } = useServices()
-  const [deleting, setDeleting] = useState<string | null>(null)
-  
+  const { services, loading, error, createService, updateService, deleteService } = useServices()
+  const [deleting, setDeleting] = useState<any>(null)
+
   const initialFormData: CreateServiceData = {
     name: '',
     description: '',
@@ -21,7 +20,7 @@ export function ServicesManagement() {
     duration_minutes: 60,
     image_url: ''
   }
-  
+
   const {
     editingItem: editingService,
     isCreating,
@@ -35,9 +34,9 @@ export function ServicesManagement() {
     handleSubmit
   } = useAdminForm<Service, CreateServiceData>({
     initialData: initialFormData,
-    createFn: servicesApi.create,
-    updateFn: servicesApi.update,
-    onSuccess: refreshServices
+    createFn: (data) => createService(data),
+    updateFn: (_id, data) => updateService({ id: _id as any, ...data }),
+    onSuccess: () => { }
   })
 
   const mapServiceToFormData = (service: Service): CreateServiceData => ({
@@ -52,13 +51,12 @@ export function ServicesManagement() {
     handleEdit(service, mapServiceToFormData)
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (_id: any) => {
     if (!confirm('¿Estás seguro de que quieres eliminar este servicio?')) return
-    
-    setDeleting(id)
+
+    setDeleting(_id)
     try {
-      await servicesApi.delete(id)
-      refreshServices()
+      await deleteService({ id: _id as any })
     } catch (error) {
       alert('Error al eliminar el servicio: ' + (error instanceof Error ? error.message : 'Error desconocido'))
     } finally {
@@ -80,7 +78,7 @@ export function ServicesManagement() {
         <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-slate-800 mb-2">Error al cargar los servicios</h3>
         <p className="text-slate-600 mb-4">{error}</p>
-        <Button onClick={refreshServices}>Intentar de nuevo</Button>
+        <Button onClick={() => window.location.reload()}>Intentar de nuevo</Button>
       </div>
     )
   }
@@ -228,7 +226,7 @@ export function ServicesManagement() {
           </Card>
         ) : (
           services.map((service) => (
-            <Card key={service.id}>
+            <Card key={service._id}>
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
@@ -250,15 +248,15 @@ export function ServicesManagement() {
                     )}
                     {service.image_url && (
                       <div className="mt-3">
-                        <img 
-                          src={service.image_url} 
+                        <img
+                          src={service.image_url}
                           alt={service.name}
                           className="w-24 h-24 object-cover rounded-md border border-slate-200"
                         />
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="flex gap-2 ml-4 flex-shrink-0"> {/* Added flex-shrink-0 */}
                     <Button
                       variant="outline"
@@ -270,11 +268,11 @@ export function ServicesManagement() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDelete(service.id)}
-                      disabled={deleting === service.id}
+                      onClick={() => handleDelete(service._id)}
+                      disabled={deleting === service._id}
                       className="text-red-600 border-red-600 hover:bg-red-50"
                     >
-                      {deleting === service.id ? (
+                      {deleting === service._id ? (
                         <Spinner size="sm" />
                       ) : (
                         <Trash2 className="w-4 h-4" />

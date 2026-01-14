@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { contentApi } from '../../api/content';
+import { useSiteContent } from '../../hooks';
 import type { SiteContent } from '../../types';
 import { Button } from '../../components/Button';
 import { Card, CardContent, CardHeader } from '../../components/Card';
@@ -7,37 +7,26 @@ import { Spinner } from '../../components/Spinner';
 import { AlertCircle } from 'lucide-react';
 
 export function ContentManagement() {
-  const [content, setContent] = useState<SiteContent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { content, loading, error, updateContent } = useSiteContent()
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
+  const [localContent, setLocalContent] = useState<SiteContent[]>([]);
 
   useEffect(() => {
-    loadContent();
-  }, []);
-
-  const loadContent = async () => {
-    try {
-      setLoading(true);
-      const data = await contentApi.getAll();
-      setContent(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load content');
-    } finally {
-      setLoading(false);
+    if (content) {
+      setLocalContent(content);
     }
-  };
+  }, [content]);
 
   const handleInputChange = (key: string, value: string) => {
-    setContent(prev => {
+    setLocalContent(prev => {
       const existingIndex = prev.findIndex(item => item.key === key);
       if (existingIndex > -1) {
         const newState = [...prev];
         newState[existingIndex] = { ...newState[existingIndex], value };
         return newState;
       } else {
-        return [...prev, { key, value }];
+        return [...prev, { key, value } as any];
       }
     });
   };
@@ -46,7 +35,7 @@ export function ContentManagement() {
     e.preventDefault();
     setSaving(true);
     try {
-      await contentApi.update(content);
+      await updateContent(localContent as any);
       alert('¡Contenido actualizado correctamente!');
     } catch (err) {
       alert('Error al actualizar el contenido: ' + (err instanceof Error ? err.message : 'Error desconocido'));
@@ -56,7 +45,7 @@ export function ContentManagement() {
   };
 
   const renderField = (key: string, label: string, type: 'text' | 'textarea' = 'text') => {
-    const item = content.find(c => c.key === key);
+    const item = localContent.find(c => c.key === key);
     const value = item ? item.value : '';
 
     return (
@@ -91,7 +80,7 @@ export function ContentManagement() {
         <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-slate-800 mb-2">Error</h3>
         <p className="text-slate-600 mb-4">{error}</p>
-        <Button onClick={loadContent}>Reintentar</Button>
+        <Button onClick={() => window.location.reload()}>Reintentar</Button>
       </div>
     );
   }
@@ -99,7 +88,7 @@ export function ContentManagement() {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-slate-800">Gestión de Contenido</h2>
-      
+
       <div className="border-b border-slate-200">
         <nav className="-mb-px flex space-x-8">
           <button

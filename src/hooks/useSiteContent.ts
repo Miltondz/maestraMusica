@@ -1,31 +1,23 @@
-import { useState, useEffect } from 'react';
-import { contentApi } from '../api/content';
-import type { SiteContent } from '../types';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 export function useSiteContent() {
-  const [content, setContent] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const siteContent = useQuery(api.siteContent.getAll);
+  const updateBulk = useMutation(api.siteContent.updateBulk);
 
-  useEffect(() => {
-    loadContent();
-  }, []);
+  const contentMap = siteContent?.reduce((acc, item) => {
+    acc[item.key] = item.value;
+    return acc;
+  }, {} as Record<string, any>) ?? {};
 
-  const loadContent = async () => {
-    try {
-      setLoading(true);
-      const data = await contentApi.getAll();
-      const contentMap = data.reduce((acc, item) => {
-        acc[item.key] = item.value;
-        return acc;
-      }, {} as Record<string, string>);
-      setContent(contentMap);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load site content');
-    } finally {
-      setLoading(false);
+  return {
+    content: siteContent ?? [],
+    contentMap,
+    loading: siteContent === undefined,
+    error: null,
+    refreshContent: () => { },
+    updateContent: async (updates: { key: string, value: any }[]) => {
+      await updateBulk({ updates });
     }
   };
-
-  return { content, loading, error, refreshContent: loadContent };
 }

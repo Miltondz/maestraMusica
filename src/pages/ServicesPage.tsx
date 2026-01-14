@@ -68,7 +68,7 @@ export function ServicesPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <SEO 
+      <SEO
         title="Clases de Piano, Guitarra y Canto | Servicios de Música"
         description="Explora nuestra oferta de clases de música online y presenciales. Piano, guitarra, canto, teoría musical y más. Precios competitivos y horarios flexibles."
         keywords={['precios clases musica', 'costo clases piano', 'clases guitarra online', 'clases canto venezuela']}
@@ -103,7 +103,7 @@ export function ServicesPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {services.map((service, index) => (
               <motion.div
-                key={service.id}
+                key={service._id}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
@@ -136,7 +136,7 @@ export function ServicesPage() {
                       </div>
                     </div>
                     <div className="border-t pt-6">
-                      <Link to={`/reservar?service=${service.id}`}>
+                      <Link to={`/reservar?service=${service._id}`}>
                         <Button className="w-full" size="lg">
                           Reservar Clase
                           <ArrowRight className="w-4 h-4 ml-2" />

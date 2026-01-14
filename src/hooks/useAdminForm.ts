@@ -2,12 +2,12 @@ import { useState } from 'react'
 
 interface UseAdminFormOptions<T, CreateData> {
   initialData: CreateData
-  createFn: (data: CreateData) => Promise<T>
-  updateFn: (id: string, data: Partial<CreateData>) => Promise<T>
+  createFn: (data: CreateData) => Promise<any>
+  updateFn: (id: any, data: Partial<CreateData>) => Promise<any>
   onSuccess: () => void
 }
 
-export function useAdminForm<T extends { id: string }, CreateData>({
+export function useAdminForm<T extends { _id: any }, CreateData>({
   initialData,
   createFn,
   updateFn,
@@ -47,7 +47,7 @@ export function useAdminForm<T extends { id: string }, CreateData>({
 
     try {
       if (editingItem) {
-        await updateFn(editingItem.id, formData)
+        await updateFn(editingItem._id, formData)
       } else {
         await createFn(formData)
       }

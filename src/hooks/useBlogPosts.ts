@@ -1,8 +1,20 @@
-import { useData } from './useData'
-import { blogApi } from '../api/blog'
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import type { BlogPost } from '../types'
 
 export function useBlogPosts() {
-  const { data: blogPosts, loading, error, refresh: refreshBlogPosts } = useData<BlogPost>(blogApi.getAll)
-  return { blogPosts, loading, error, refreshBlogPosts }
+  const blogPosts = useQuery(api.blogPosts.list);
+  const createBlogPost = useMutation(api.blogPosts.create);
+  const updateBlogPost = useMutation(api.blogPosts.update);
+  const deleteBlogPost = useMutation(api.blogPosts.remove);
+
+  return {
+    blogPosts: blogPosts ?? [],
+    loading: blogPosts === undefined,
+    error: null,
+    createBlogPost,
+    updateBlogPost,
+    deleteBlogPost,
+    refreshBlogPosts: () => { } // Real-time
+  }
 }

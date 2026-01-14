@@ -43,7 +43,7 @@ export function BlogCarousel() {
 
         <div className="grid md:grid-cols-3 gap-8">
           {featuredPosts.map((post) => (
-            <Card key={post.id} className="hover:shadow-xl transition-shadow duration-300 flex flex-col">
+            <Card key={post._id} className="hover:shadow-xl transition-shadow duration-300 flex flex-col">
               <div className="h-56 overflow-hidden">
                 <img
                   src={post.image_url || '/images/placeholders/elegant_music_education_blog_placeholder.jpg'}

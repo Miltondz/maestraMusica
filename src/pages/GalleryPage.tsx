@@ -127,7 +127,7 @@ function GalleryPage() {
           <AnimatePresence>
             <motion.div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-8">
               {filteredMedia.length === 0 ? (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="col-span-full text-center py-16"
@@ -141,7 +141,7 @@ function GalleryPage() {
                   const IconComponent = getMediaIcon(item.media_type);
                   return (
                     <motion.div
-                      key={item.id}
+                      key={item._id}
                       layout
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -153,7 +153,7 @@ function GalleryPage() {
                       <Card className="h-full overflow-hidden">
                         <div className="relative h-48 sm:h-56 bg-slate-100">
                           <img
-                            src={item.thumbnail_url || item.media_url}
+                            src={item.media_url}
                             alt={item.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
@@ -168,7 +168,7 @@ function GalleryPage() {
                             </div>
                           )}
                           <div className="absolute bottom-0 left-0 p-2 sm:p-4">
-                             <h3 className="font-bold text-white text-sm sm:text-lg leading-tight line-clamp-2">{item.title}</h3>
+                            <h3 className="font-bold text-white text-sm sm:text-lg leading-tight line-clamp-2">{item.title}</h3>
                           </div>
                         </div>
                       </Card>
@@ -206,7 +206,7 @@ function GalleryPage() {
               >
                 <X className="w-6 h-6" />
               </Button>
-              
+
               <div className="flex-grow p-2 sm:p-4 flex items-center justify-center">
                 {currentMedia.media_type === 'photo' && (
                   <img src={currentMedia.media_url} alt={currentMedia.title} className="w-full h-auto max-h-[75vh] object-contain" />
@@ -220,11 +220,11 @@ function GalleryPage() {
                   <video controls className="w-full h-auto max-h-[75vh]"><source src={currentMedia.media_url} type="video/mp4" />Tu navegador no soporta videos.</video>
                 )}
                 {currentMedia.media_type === 'instagram' && (
-                   <div className="w-full max-w-md mx-auto my-10">
+                  <div className="w-full max-w-md mx-auto my-10">
                     <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-pink-200 rounded-lg p-8 text-center">
                       <Instagram className="w-16 h-16 text-pink-500 mx-auto mb-6" />
                       <h4 className="text-xl font-bold text-slate-800 mb-2">{currentMedia.title}</h4>
-                      <p className="text-slate-600 text-sm mb-6">{currentMedia.description}</p>
+                      <p className="text-slate-600 text-sm mb-6 uppercase tracking-wider">{currentMedia.category}</p>
                       <a href={currentMedia.media_url} target="_blank" rel="noopener noreferrer">
                         <Button variant="primary">Ver en Instagram</Button>
                       </a>
@@ -234,7 +234,7 @@ function GalleryPage() {
               </div>
               <div className="bg-white/80 backdrop-blur-sm p-4 mt-auto border-t border-slate-200">
                 <h3 className="text-lg sm:text-xl font-bold text-slate-800">{currentMedia.title}</h3>
-                {currentMedia.description && <p className="text-sm sm:text-base text-slate-600 mt-1">{currentMedia.description}</p>}
+                <p className="text-sm sm:text-base text-slate-600 mt-1 uppercase tracking-wider">{currentMedia.category}</p>
               </div>
             </motion.div>
           </motion.div>

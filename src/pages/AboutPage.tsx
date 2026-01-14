@@ -34,7 +34,7 @@ const TimelineItem = ({ icon, title, children, isLast = false }: { icon: React.R
 );
 
 export function AboutPage() {
-  const { content, loading } = useSiteContent();
+  const { contentMap: content, loading } = useSiteContent();
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center"><Spinner size="lg" /></div>;

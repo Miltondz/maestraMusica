@@ -29,7 +29,7 @@ export function HomePage() {
   const { services, loading: servicesLoading } = useServices();
   const { testimonials, loading: testimonialsLoading } = useTestimonials();
   const { featuredItems, loading: mediaLoading } = useFeaturedMedia();
-  const { content, loading: contentLoading } = useSiteContent();
+  const { contentMap: content, loading: contentLoading } = useSiteContent();
 
   const featuredServices = services.slice(0, 3);
   const featuredTestimonials = testimonials.slice(0, 3);
@@ -72,7 +72,7 @@ export function HomePage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <SEO 
+      <SEO
         title="Clases de Música Online y Presenciales | Laura Karol"
         description="Aprende piano, guitarra, canto y teoría musical con Laura Karol. Clases personalizadas en Falcón, Venezuela y online para todo el mundo."
         keywords={['clases de musica', 'piano', 'guitarra', 'canto', 'venezuela', 'online', 'punto fijo']}
@@ -133,10 +133,10 @@ export function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <motion.div
-               initial={{ opacity: 0, x: -50 }}
-               whileInView={{ opacity: 1, x: 0 }}
-               viewport={{ once: true, amount: 0.5 }}
-               transition={{ duration: 0.8, ease: 'easeOut' }}
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
             >
               <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-6">
                 {content.home_about_title || 'Una Trayectoria Dedicada a la Música'}
@@ -167,8 +167,8 @@ export function HomePage() {
                 className="rounded-xl shadow-2xl w-full h-auto object-cover aspect-[4/3]"
               />
               <div className="absolute -bottom-6 -right-6 bg-amber-600 text-white p-5 rounded-full shadow-lg flex flex-col items-center justify-center w-28 h-28 sm:w-32 sm:h-32">
-                  <div className="text-3xl sm:text-4xl font-bold">25+</div>
-                  <div className="text-xs sm:text-sm text-center leading-tight">Años de Exp.</div>
+                <div className="text-3xl sm:text-4xl font-bold">25+</div>
+                <div className="text-xs sm:text-sm text-center leading-tight">Años de Exp.</div>
               </div>
             </motion.div>
           </div>
@@ -223,7 +223,7 @@ export function HomePage() {
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {featuredServices.map((service) => (
-                <Card key={service.id}>
+                <Card key={service._id}>
                   <div className="h-56 overflow-hidden">
                     <img src={service.image_url || '/images/placeholders/elegant_music_education_blog_placeholder.jpg'} alt={`Clases de ${service.name}`} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                   </div>
@@ -259,7 +259,7 @@ export function HomePage() {
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {featuredTestimonials.map((testimonial) => (
-                <Card key={testimonial.id}>
+                <Card key={testimonial._id}>
                   <CardContent className="p-8 flex flex-col h-full">
                     <div className="flex items-center mb-4">
                       {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 text-amber-400 fill-current" />)}
@@ -291,9 +291,9 @@ export function HomePage() {
               className="grid grid-cols-2 gap-4"
             >
               {featuredPhotos.map((item) => (
-                <div key={item.id} className="relative overflow-hidden rounded-lg shadow-lg aspect-video">
+                <div key={item._id} className="relative overflow-hidden rounded-lg shadow-lg aspect-video">
                   <img
-                    src={item.thumbnail_url || item.media_url}
+                    src={(item as any).thumbnail_url || item.media_url}
                     alt={item.title}
                     className="w-full h-full object-cover"
                   />

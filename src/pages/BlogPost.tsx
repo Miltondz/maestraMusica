@@ -4,40 +4,17 @@ import { Calendar, BookOpen, ArrowLeft, User, Tag } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Spinner } from '../components/Spinner';
 import { formatDate } from '../lib/utils';
-import { blogApi } from '../api/blog';
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import type { BlogPost as BlogPostType } from '../types';
 import { motion } from 'framer-motion';
 import { SEO } from '../components/SEO';
 
 export function BlogPost() {
   const { slug } = useParams<{ slug: string }>();
-  const [post, setPost] = useState<BlogPostType | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      if (!slug) {
-        setError('No se encontró el slug de la publicación.');
-        setLoading(false);
-        return;
-      }
-      try {
-        setLoading(true);
-        const fetchedPost = await blogApi.getBySlug(slug);
-        if (fetchedPost) {
-          setPost(fetchedPost);
-        } else {
-          setError('Publicación no encontrada.');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error al cargar la publicación.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPost();
-  }, [slug]);
+  const post = useQuery(api.blogPosts.getBySlug, slug ? { slug } : "skip");
+  const loading = post === undefined;
+  const error = slug && post === null ? 'Publicación no encontrada.' : null;
 
   const formatContent = (content: string) => {
     return content.split('\n\n').map((paragraph, index) => {
@@ -50,7 +27,7 @@ export function BlogPost() {
       }
       return (
         <p key={index} className="text-lg text-slate-700 mb-6 leading-relaxed">
-          {paragraph.split(/(\**.*\**)/g).map((part, i) => 
+          {paragraph.split(/(\**.*\**)/g).map((part, i) =>
             part.startsWith('**') ? <strong key={i}>{part.slice(2, -2)}</strong> : part
           )}
         </p>
@@ -96,7 +73,7 @@ export function BlogPost() {
     "headline": post.title,
     "image": post.image_url,
     "datePublished": post.published_date,
-    "dateModified": post.updated_at || post.published_date,
+    "dateModified": new Date(post._creationTime).toISOString(),
     "author": {
       "@type": "Person",
       "name": "Laura Díaz"
@@ -114,7 +91,7 @@ export function BlogPost() {
 
   return (
     <div className="bg-white">
-      <SEO 
+      <SEO
         title={post.title}
         description={post.excerpt || post.content.substring(0, 155)}
         image={post.image_url || undefined}
@@ -124,13 +101,13 @@ export function BlogPost() {
 
       {/* Header Section */}
       <header className="relative py-28 lg:py-40 px-4 bg-slate-800 text-white">
-        <img 
-          src={post.image_url || 'https://placehold.co/1200x600/d1d5db/374151?text=Blog+Post'} 
+        <img
+          src={post.image_url || 'https://placehold.co/1200x600/d1d5db/374151?text=Blog+Post'}
           alt={`Imagen principal para el artículo sobre ${post.title}`}
-          className="absolute inset-0 w-full h-full object-cover opacity-20" 
+          className="absolute inset-0 w-full h-full object-cover opacity-20"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 to-transparent"></div>
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -150,15 +127,18 @@ export function BlogPost() {
       {/* Blog Post Content */}
       <article className="py-16 lg:py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
             className="prose max-w-none"
           >
             {formatContent(post.content)}
+            <p className="text-sm text-slate-500 mt-8">
+              Actualizado el {formatDate(new Date(post._creationTime).toISOString())}
+            </p>
           </motion.div>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4, ease: 'easeOut' }}

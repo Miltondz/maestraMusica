@@ -5,20 +5,19 @@ import { Button } from '../../components/Button'
 import { Spinner } from '../../components/Spinner'
 import { useAdminForm } from '../../hooks/useAdminForm'
 import { useTestimonials } from '../../hooks/useTestimonials'
-import { testimonialsApi } from '../../api/testimonials'
 import { formatDate } from '../../lib/utils'
 import type { Testimonial, CreateTestimonialData } from '../../types'
 
 export function TestimonialsManagement() {
-  const { testimonials, loading, error, refreshTestimonials } = useTestimonials()
+  const { testimonials, loading, error, createTestimonial, updateTestimonial, deleteTestimonial } = useTestimonials()
   const [deleting, setDeleting] = useState<string | null>(null)
-  
+
   const initialFormData: CreateTestimonialData = {
     author_name: '',
     content: '',
     rating: 5
   }
-  
+
   const {
     editingItem: editingTestimonial,
     isCreating,
@@ -32,9 +31,9 @@ export function TestimonialsManagement() {
     handleSubmit
   } = useAdminForm<Testimonial, CreateTestimonialData>({
     initialData: initialFormData,
-    createFn: testimonialsApi.create,
-    updateFn: testimonialsApi.update,
-    onSuccess: refreshTestimonials
+    createFn: (data) => createTestimonial(data),
+    updateFn: (_id, data) => updateTestimonial({ id: _id as any, ...data }),
+    onSuccess: () => { }
   })
 
   const mapTestimonialToFormData = (testimonial: Testimonial): CreateTestimonialData => ({
@@ -47,13 +46,12 @@ export function TestimonialsManagement() {
     handleEdit(testimonial, mapTestimonialToFormData)
   }
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (_id: string) => {
     if (!confirm('¿Estás seguro de que quieres eliminar este testimonio?')) return
-    
-    setDeleting(id)
+
+    setDeleting(_id)
     try {
-      await testimonialsApi.delete(id)
-      refreshTestimonials()
+      await deleteTestimonial({ id: _id as any })
     } catch (error) {
       alert('Error al eliminar el testimonio: ' + (error instanceof Error ? error.message : 'Error desconocido'))
     } finally {
@@ -75,7 +73,7 @@ export function TestimonialsManagement() {
         <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-slate-800 mb-2">Error al cargar testimonios</h3>
         <p className="text-slate-600 mb-4">{error}</p>
-        <Button onClick={refreshTestimonials}>Intentar de nuevo</Button>
+        <Button onClick={() => window.location.reload()}>Intentar de nuevo</Button>
       </div>
     )
   }
@@ -194,7 +192,7 @@ export function TestimonialsManagement() {
           </Card>
         ) : (
           testimonials.map((testimonial) => (
-            <Card key={testimonial.id}>
+            <Card key={testimonial._id}>
               <CardContent className="p-6">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
@@ -206,11 +204,11 @@ export function TestimonialsManagement() {
                         <Star key={i + testimonial.rating} className="w-4 h-4 text-slate-300" />
                       ))}
                     </div>
-                    
+
                     <blockquote className="text-slate-600 mb-4 text-lg leading-relaxed"> {/* Keep this blockquote */}
                       "{testimonial.content}"
                     </blockquote>
-                    
+
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center">
                         <User className="w-5 h-5 text-slate-600" />
@@ -220,12 +218,12 @@ export function TestimonialsManagement() {
                           {testimonial.author_name}
                         </div>
                         <div className="text-xs text-slate-400">
-                          Agregado {formatDate(testimonial.created_at)}
+                          Agregado {formatDate(new Date(testimonial._creationTime))}
                         </div>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-2 ml-4">
                     <Button
                       variant="outline"
@@ -237,11 +235,11 @@ export function TestimonialsManagement() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDelete(testimonial.id)}
-                      disabled={deleting === testimonial.id}
+                      onClick={() => handleDelete(testimonial._id)}
+                      disabled={deleting === testimonial._id}
                       className="text-red-600 border-red-600 hover:bg-red-50"
                     >
-                      {deleting === testimonial.id ? (
+                      {deleting === testimonial._id ? (
                         <Spinner size="sm" />
                       ) : (
                         <Trash2 className="w-4 h-4" />

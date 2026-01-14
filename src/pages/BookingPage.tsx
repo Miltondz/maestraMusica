@@ -7,8 +7,9 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import { Button } from '../components/Button';
 import { Card, CardContent, CardHeader } from '../components/Card';
-import { useServices } from '../hooks/useServices';
-import { appointmentsApi } from '../api/appointments';
+import { useServices, useAppointments } from '../hooks';
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { formatTime, formatDate } from '../lib/utils';
 import { Spinner } from '../components/Spinner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,14 +27,17 @@ type BookingFormData = z.infer<typeof bookingSchema>;
 export function BookingPage() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string>('');
-  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
-  const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
 
   const { services, loading: servicesLoading } = useServices();
+  const { createAppointment } = useAppointments();
+
+  const dateStr = selectedDate ? selectedDate.toISOString().split('T')[0] : null;
+  const availableSlots = useQuery(api.appointments.getAvailableSlots, dateStr ? { date: dateStr } : "skip");
+  const loadingSlots = selectedDate && availableSlots === undefined;
 
   const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
@@ -46,24 +50,9 @@ export function BookingPage() {
     }
   }, [searchParams, services, setValue]);
 
-  const handleDateSelect = async (date: Date | undefined) => {
+  const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date);
     setSelectedTime('');
-    if (date) {
-      setLoadingSlots(true);
-      try {
-        const dateStr = date.toISOString().split('T')[0];
-        const slots = await appointmentsApi.getAvailableSlots(dateStr);
-        setAvailableSlots(slots);
-      } catch (error) {
-        console.error('Error loading available slots:', error);
-        setAvailableSlots([]);
-      } finally {
-        setLoadingSlots(false);
-      }
-    } else {
-      setAvailableSlots([]);
-    }
   };
 
   const onSubmit = async (data: BookingFormData) => {
@@ -76,10 +65,10 @@ export function BookingPage() {
     setBookingError(null);
 
     try {
-      await appointmentsApi.create({
+      await createAppointment({
         client_name: data.client_name,
         client_email: data.client_email,
-        service_id: data.service_id,
+        service_id: data.service_id as any,
         notes: data.notes,
         appointment_date: selectedDate.toISOString().split('T')[0],
         appointment_time: selectedTime,
@@ -140,7 +129,7 @@ export function BookingPage() {
                 <Card>
                   <CardHeader><h2 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center"><Clock className="w-6 h-6 mr-3 text-amber-600" />2. Elige la Hora</h2></CardHeader>
                   <CardContent>
-                    {!selectedDate ? <p className="text-slate-500 text-center py-8">Selecciona una fecha para ver horarios.</p> : loadingSlots ? <div className="flex justify-center py-8"><Spinner /></div> : availableSlots.length === 0 ? <p className="text-slate-500 text-center py-8">No hay horarios para esta fecha.</p> : <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
+                    {!selectedDate ? <p className="text-slate-500 text-center py-8">Selecciona una fecha para ver horarios.</p> : loadingSlots ? <div className="flex justify-center py-8"><Spinner /></div> : (!availableSlots || availableSlots.length === 0) ? <p className="text-slate-500 text-center py-8">No hay horarios para esta fecha.</p> : <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
                       {availableSlots.map(slot => <Button key={slot} type="button" variant={selectedTime === slot ? 'primary' : 'outline'} onClick={() => setSelectedTime(slot)}>{formatTime(slot)}</Button>)}
                     </div>}
                   </CardContent>
@@ -149,8 +138,8 @@ export function BookingPage() {
                   <CardHeader><h2 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center"><Music className="w-6 h-6 mr-3 text-amber-600" />3. Escoge el Servicio</h2></CardHeader>
                   <CardContent>
                     {servicesLoading ? <div className="flex justify-center py-4"><Spinner /></div> : <div className="space-y-3">
-                      {services.map(service => <label key={service.id} className={`flex items-center p-3 sm:p-4 border rounded-lg cursor-pointer transition-all ${errors.service_id ? 'border-red-500' : ''} ${watch('service_id') === service.id ? 'bg-amber-50 border-amber-500' : 'hover:bg-slate-100'}`}>
-                        <input type="radio" value={service.id} {...register('service_id')} className="mr-3 sm:mr-4 text-amber-600 focus:ring-amber-500" />
+                      {services.map(service => <label key={service._id} className={`flex items-center p-3 sm:p-4 border rounded-lg cursor-pointer transition-all ${errors.service_id ? 'border-red-500' : ''} ${watch('service_id') === service._id ? 'bg-amber-50 border-amber-500' : 'hover:bg-slate-100'}`}>
+                        <input type="radio" value={service._id} {...register('service_id')} className="mr-3 sm:mr-4 text-amber-600 focus:ring-amber-500" />
                         <div className="flex-1">
                           <div className="font-semibold text-slate-800">{service.name}</div>
                           <div className="text-sm text-slate-600">{service.price}$ &bull; {service.duration_minutes} min</div>

@@ -1,75 +1,67 @@
 import { useState } from 'react';
-import { pb } from '../services/pocketbase';
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 export interface UseImageUploadOptions {
-  bucket?: string;
   onSuccess?: (url: string) => void;
   onError?: (error: string) => void;
+  bucket?: string;
 }
 
 export function useImageUpload(options: UseImageUploadOptions = {}) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  const generateUploadUrl = useMutation(api.mediaUploads.generateUploadUrl);
+  const saveImage = useMutation(api.mediaUploads.saveImage);
+
   const uploadImage = async (file: File): Promise<string> => {
     try {
       setUploading(true);
-      setProgress(0);
+      setProgress(10);
 
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         throw new Error('Please select an image file');
       }
 
-      // Validate file size (10MB max)
-      if (file.size > 10 * 1024 * 1024) {
-        throw new Error('File size must be less than 10MB');
-      }
+      // Step 1: Get a short-lived upload URL from Convex
+      const postUrl = await generateUploadUrl();
+      setProgress(30);
 
-      // 1. Read file for preview/progress simulation
-      await new Promise<void>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve();
-        reader.onerror = () => reject(new Error('Failed to read file'));
-        reader.onprogress = (event) => {
-          if (event.lengthComputable) {
-            setProgress((event.loaded / event.total) * 30);
-          }
-        };
-        reader.readAsArrayBuffer(file);
+      // Step 2: POST the file to the URL
+      const result = await fetch(postUrl, {
+        method: "POST",
+        headers: { "Content-Type": file.type },
+        body: file,
       });
 
-      setProgress(50);
+      if (!result.ok) {
+        throw new Error(`Upload failed: ${result.statusText}`);
+      }
 
-      // 2. Upload to PocketBase
-      // Assumes a collection named 'media_uploads' exists with a 'file' field.
-      // You can also use other collections like 'blog_posts' if the file is attached directly, 
-      // but this hook seems generic.
-      const formData = new FormData();
-      formData.append('file', file);
-      
-      // Optional: Add metadata if needed, e.g. base64Data or fileName, 
-      // but PB handles fileName automatically from the File object.
+      const { storageId } = await result.json();
+      setProgress(70);
 
-      const record = await pb.collection('media_uploads').create(formData);
-      
+      // Step 3: Save the storageId in our database (optional metadata)
+      const url = await saveImage({ storageId });
+      if (!url) {
+        throw new Error('Failed to generate image URL');
+      }
+      setProgress(90);
+
+      // Step 4: For immediate use in the UI, we might need a public URL
+      const imageUrl = url;
+
       setProgress(100);
-      
-      // 3. Get URL
-      // pb.files.getUrl(record, filename)
-      const imageUrl = pb.files.getUrl(record, record.file);
-      
       options.onSuccess?.(imageUrl);
-      
       return imageUrl;
     } catch (error) {
-      console.error(error); // Debugging
       const errorMessage = error instanceof Error ? error.message : 'Upload failed';
       options.onError?.(errorMessage);
       throw error;
     } finally {
       setUploading(false);
-      setTimeout(() => setProgress(0), 1000); // Reset progress after delay
+      setTimeout(() => setProgress(0), 1000);
     }
   };
 

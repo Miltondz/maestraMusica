@@ -3,10 +3,10 @@ import { DollarSign, Calendar, User, CheckCircle, XCircle, AlertCircle, Filter, 
 import { Card, CardContent } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { Spinner } from '../../components/Spinner';
+import { usePayments, useAppointments } from '../../hooks';
 import { formatDate, formatPrice, formatTime } from '../../lib/utils';
-import { paymentsApi } from '../../api/payments';
-import { appointmentsApi } from '../../api/appointments';
 import type { Payment, Appointment, CreatePaymentData } from '../../types';
+import { Id } from '../../../convex/_generated/dataModel';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -16,14 +16,13 @@ type FilterStatus = 'all' | 'pending' | 'completed' | 'failed' | 'cancelled';
 function AddPaymentModal({
   isOpen,
   onClose,
-  onSuccess,
   appointments
 }: {
   isOpen: boolean
   onClose: () => void
-  onSuccess: () => void
   appointments: Appointment[]
 }) {
+  const { createPayment } = usePayments();
   const [formData, setFormData] = useState<CreatePaymentData>({
     amount: 0,
     appointment_id: '',
@@ -34,7 +33,6 @@ function AddPaymentModal({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Reset form when modal opens
     if (isOpen) {
       setFormData({
         amount: 0,
@@ -57,13 +55,12 @@ function AddPaymentModal({
       setError('Por favor, selecciona una cita y un monto válido.');
       return;
     }
-    
+
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
-      await paymentsApi.create(formData);
-      onSuccess();
+      await createPayment({ ...formData, appointment_id: formData.appointment_id as any });
       onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al crear el pago.');
@@ -96,7 +93,7 @@ function AddPaymentModal({
             >
               <option value="" disabled>Selecciona una cita</option>
               {appointments.map(apt => (
-                <option key={apt.id} value={apt.id}>
+                <option key={apt._id} value={apt._id}>
                   {apt.client_name} - {formatDate(apt.appointment_date)}
                 </option>
               ))}
@@ -135,7 +132,7 @@ function AddPaymentModal({
               <option value="Otro">Otro</option>
             </select>
           </div>
-           <div>
+          <div>
             <label htmlFor="status" className="block text-sm font-medium text-slate-700 mb-1">
               Estado
             </label>
@@ -170,8 +167,8 @@ type NotificationType = 'success' | 'error';
 // Componente de Notificación
 function Notification({ message, type, onClose }: { message: string; type: NotificationType; onClose: () => void }) {
   const baseClasses = 'fixed top-20 right-5 p-4 rounded-lg shadow-lg flex items-center z-[100]';
-  const typeClasses = type === 'success' 
-    ? 'bg-green-100 text-green-800' 
+  const typeClasses = type === 'success'
+    ? 'bg-green-100 text-green-800'
     : 'bg-red-100 text-red-800';
 
   useEffect(() => {
@@ -210,16 +207,16 @@ function ConfirmationModal({ isOpen, title, message, onConfirm, onCancel, confir
           <p className="text-slate-600 mb-8">{message}</p>
         </div>
         <div className="flex justify-center gap-4">
-          <Button 
-            variant="outline" 
-            onClick={onCancel} 
+          <Button
+            variant="outline"
+            onClick={onCancel}
             className="w-full py-3"
             disabled={isLoading}
           >
             {cancelText || 'Cancelar'}
           </Button>
-          <Button 
-            onClick={onConfirm} 
+          <Button
+            onClick={onConfirm}
             className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white"
             disabled={isLoading}
           >
@@ -232,15 +229,14 @@ function ConfirmationModal({ isOpen, title, message, onConfirm, onCancel, confir
 }
 
 export function EnhancedPaymentsManagement() {
-  const [payments, setPayments] = useState<Payment[]>([]);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { payments, loading: paymentsLoading, error: paymentsError, updateStatus: updatePaymentStatus, deletePayment } = usePayments();
+  const { appointments, loading: appointmentsLoading, error: appointmentsError } = useAppointments();
+
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: NotificationType } | null>(null);
-  const [confirmation, setConfirmation] = useState<{ 
+  const [confirmation, setConfirmation] = useState<{
     isOpen: boolean;
     title: string;
     message: string;
@@ -249,61 +245,26 @@ export function EnhancedPaymentsManagement() {
     cancelText?: string;
   } | null>(null);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async (showNotification = false) => {
-    try {
-      setLoading(true);
-      const [paymentsData, appointmentsData] = await Promise.all([
-        paymentsApi.getAll(),
-        appointmentsApi.getAll()
-      ]);
-      
-      const sortedPayments = paymentsData.sort((a, b) => new Date(b.payment_date).getTime() - new Date(a.payment_date).getTime());
-
-      setPayments(sortedPayments);
-      setAppointments(appointmentsData);
-      setError(null);
-      if (showNotification) {
-        setNotification({ message: 'Datos actualizados correctamente.', type: 'success' });
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ocurrió un error al cargar los datos.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loading = paymentsLoading || appointmentsLoading;
+  const error = paymentsError || appointmentsError;
 
   const handleStatusUpdate = async (paymentId: string, status: 'completed' | 'pending' | 'cancelled' | 'failed') => {
-    const originalPayments = [...payments];
-    
-    setPayments(prevPayments => 
-      prevPayments.map(p => p.id === paymentId ? { ...p, status } : p)
-    );
-
     setUpdatingStatus(paymentId);
-    
-    try {
-      await paymentsApi.updateStatus(paymentId, status);
-      setNotification({ message: 'Estado del pago actualizado.', type: 'success' });
-      const updatedPayments = await paymentsApi.getAll();
-      const sortedPayments = updatedPayments.sort((a, b) => new Date(b.payment_date).getTime() - new Date(a.payment_date).getTime());
-      setPayments(sortedPayments);
 
+    try {
+      await updatePaymentStatus({ id: paymentId as any, status });
+      setNotification({ message: 'Estado del pago actualizado.', type: 'success' });
     } catch (error) {
-      setPayments(originalPayments);
-      setNotification({ 
-        message: 'Error al actualizar el pago: ' + (error instanceof Error ? error.message : 'Error desconocido'), 
-        type: 'error' 
+      setNotification({
+        message: 'Error al actualizar el pago: ' + (error instanceof Error ? error.message : 'Error desconocido'),
+        type: 'error'
       });
     } finally {
       setUpdatingStatus(null);
       setConfirmation(null);
     }
   };
-  
+
   const requestStatusUpdate = (paymentId: string, status: 'completed' | 'pending' | 'cancelled' | 'failed') => {
     const actionVerb = status === 'completed' ? 'completar' : status === 'cancelled' ? 'cancelar' : status === 'failed' ? 'marcar como fallido' : 'marcar como pendiente';
     setConfirmation({
@@ -315,18 +276,14 @@ export function EnhancedPaymentsManagement() {
   };
 
   const handleDelete = async (paymentId: string) => {
-    const originalPayments = [...payments];
-    
-    setPayments(prevPayments => prevPayments.filter(p => p.id !== paymentId));
-
+    if (!confirm('¿Estás seguro de que quieres eliminar este pago? Esta acción no se puede deshacer.')) return;
     try {
-      await paymentsApi.delete(paymentId);
+      await deletePayment({ id: paymentId as Id<"payments"> });
       setNotification({ message: 'Pago eliminado correctamente.', type: 'success' });
     } catch (error) {
-      setPayments(originalPayments);
-      setNotification({ 
-        message: 'Error al eliminar el pago: ' + (error instanceof Error ? error.message : 'Error desconocido'), 
-        type: 'error' 
+      setNotification({
+        message: 'Error al eliminar el pago: ' + (error instanceof Error ? error.message : 'Error desconocido'),
+        type: 'error'
       });
     } finally {
       setConfirmation(null);
@@ -345,7 +302,7 @@ export function EnhancedPaymentsManagement() {
 
   const getAppointmentDetails = (appointmentId: string | null) => {
     if (!appointmentId) return { clientName: 'N/D', appointmentDate: 'N/D', appointmentTime: 'N/D' };
-    const appointment = appointments.find(apt => apt.id === appointmentId);
+    const appointment = appointments.find(apt => apt._id === appointmentId);
     return {
       clientName: appointment?.client_name || 'Cliente Desconocido',
       appointmentDate: appointment?.appointment_date ? formatDate(appointment.appointment_date) : 'N/A',
@@ -353,7 +310,13 @@ export function EnhancedPaymentsManagement() {
     };
   };
 
-  const filteredPayments = payments.filter(payment => {
+  const sortedPayments = [...(payments || [])].sort((a, b) => {
+    const dateA = a.payment_date ? new Date(a.payment_date).getTime() : a._creationTime;
+    const dateB = b.payment_date ? new Date(b.payment_date).getTime() : b._creationTime;
+    return dateB - dateA;
+  });
+
+  const filteredPayments = sortedPayments.filter(payment => {
     if (filter === 'all') return true;
     return payment.status === filter;
   });
@@ -463,22 +426,22 @@ export function EnhancedPaymentsManagement() {
         <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-slate-800 mb-2">Error al cargar los pagos</h3>
         <p className="text-slate-600 mb-4">{error}</p>
-        <Button onClick={() => loadData()}>Intentar de nuevo</Button>
+        <Button onClick={() => window.location.reload()}>Recargar página</Button>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {notification && 
-        <Notification 
-          message={notification.message} 
-          type={notification.type} 
-          onClose={() => setNotification(null)} 
+      {notification &&
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
         />
       }
       {confirmation && confirmation.isOpen &&
-        <ConfirmationModal 
+        <ConfirmationModal
           isOpen={confirmation.isOpen}
           title={confirmation.title}
           message={confirmation.message}
@@ -490,10 +453,9 @@ export function EnhancedPaymentsManagement() {
         />
       }
 
-      <AddPaymentModal 
+      <AddPaymentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={() => loadData(true)}
         appointments={appointments}
       />
 
@@ -503,7 +465,7 @@ export function EnhancedPaymentsManagement() {
           <h2 className="text-2xl font-bold text-slate-800">Gestión de Pagos</h2>
           <p className="text-slate-600 mt-1">Revisa y gestiona el historial de pagos de las lecciones</p>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <Button onClick={exportToPdf} variant="outline">
             <Download className="w-4 h-4 mr-2" />
@@ -513,16 +475,9 @@ export function EnhancedPaymentsManagement() {
             <Download className="w-4 h-4 mr-2" />
             Exportar a TXT
           </Button>
-           <Button 
-            onClick={() => loadData(true)} 
-            variant="outline"
-            disabled={loading}
-          >
-            {loading ? <Spinner size="sm" /> : <RefreshCw className="w-5 h-5" />}
-          </Button>
 
           {/* Add Payment Button */}
-          <Button 
+          <Button
             onClick={() => setIsModalOpen(true)}
             className="bg-amber-500 hover:bg-amber-600 text-white"
           >
@@ -594,7 +549,7 @@ export function EnhancedPaymentsManagement() {
                 {filter === 'all' ? 'No se encontraron pagos' : `No hay pagos ${filter}`}
               </h3>
               <p className="text-slate-600">
-                {filter === 'all' 
+                {filter === 'all'
                   ? 'El historial de pagos aparecerá aquí. Intenta agregar un nuevo pago.'
                   : `No se encontraron pagos con estado "${filter}".`
                 }
@@ -603,9 +558,9 @@ export function EnhancedPaymentsManagement() {
           </Card>
         ) : (
           filteredPayments.map((payment) => {
-            const appointmentDetails = getAppointmentDetails(payment.appointment_id);
+            const appointmentDetails = getAppointmentDetails(payment.appointment_id as any);
             return (
-              <Card key={payment.id} className="hover:shadow-md transition-shadow">
+              <Card key={payment._id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
@@ -618,7 +573,7 @@ export function EnhancedPaymentsManagement() {
                           <span className="ml-1 capitalize">{payment.status}</span>
                         </span>
                       </div>
-                      
+
                       <div className="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
                         <div className="space-y-2">
                           <div className="flex items-center">
@@ -630,7 +585,7 @@ export function EnhancedPaymentsManagement() {
                             <span>Fecha de Pago: {formatDate(payment.payment_date)}</span>
                           </div>
                         </div>
-                        
+
                         <div className="space-y-2">
                           <div className="flex items-center">
                             <Clock className="w-4 h-4 mr-2 text-slate-400" />
@@ -643,19 +598,19 @@ export function EnhancedPaymentsManagement() {
                         </div>
                       </div>
                     </div>
-                    
+
                     {/* Action Buttons */}
                     <div className="flex flex-col gap-2 ml-4">
-                      {payment.status === 'pending' && updatingStatus !== payment.id && (
+                      {payment.status === 'pending' && updatingStatus !== payment._id && (
                         <Button
                           size="sm"
-                          onClick={() => requestStatusUpdate(payment.id, 'completed')}
+                          onClick={() => requestStatusUpdate(payment._id, 'completed')}
                           className="bg-green-600 hover:bg-green-700 text-white"
                         >
                           <CheckCircle className="w-4 h-4 mr-1" /> Completar
                         </Button>
                       )}
-                      {payment.status === 'pending' && updatingStatus === payment.id && (
+                      {payment.status === 'pending' && updatingStatus === payment._id && (
                         <Button
                           size="sm"
                           disabled
@@ -668,8 +623,8 @@ export function EnhancedPaymentsManagement() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => requestStatusUpdate(payment.id, 'cancelled')}
-                          disabled={updatingStatus === payment.id}
+                          onClick={() => requestStatusUpdate(payment._id, 'cancelled')}
+                          disabled={updatingStatus === payment._id}
                           className="border-red-600 text-red-600 hover:bg-red-50"
                         >
                           <XCircle className="w-4 h-4 mr-1" />
@@ -680,8 +635,8 @@ export function EnhancedPaymentsManagement() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => requestStatusUpdate(payment.id, 'pending')}
-                          disabled={updatingStatus === payment.id}
+                          onClick={() => requestStatusUpdate(payment._id, 'pending')}
+                          disabled={updatingStatus === payment._id}
                           className="border-yellow-600 text-yellow-600 hover:bg-yellow-50"
                         >
                           <AlertCircle className="w-4 h-4 mr-1" />
@@ -691,8 +646,8 @@ export function EnhancedPaymentsManagement() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => requestDelete(payment.id)}
-                        disabled={updatingStatus === payment.id}
+                        onClick={() => requestDelete(payment._id)}
+                        disabled={updatingStatus === payment._id}
                         className="border-red-600 text-red-600 hover:bg-red-50"
                       >
                         <Trash2 className="w-4 h-4 mr-1" />

@@ -117,7 +117,7 @@ export function BlogPage() {
               <motion.div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                 {filteredPosts.map((post, index) => (
                   <motion.div
-                    key={post.id}
+                    key={post._id}
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}

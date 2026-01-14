@@ -16,13 +16,8 @@ import {
 import { Card, CardContent, CardHeader } from '../../components/Card'
 import { Button } from '../../components/Button'
 import { Spinner } from '../../components/Spinner'
-import { useServices } from '../../hooks/useServices'
-import { useTestimonials } from '../../hooks/useTestimonials'
-import { useBlogPosts } from '../../hooks/useBlogPosts'
+import { useServices, useTestimonials, useBlogPosts, useAppointments, usePayments } from '../../hooks'
 import { useContactMessages, useUnreadMessages } from '../../hooks/useContactMessages'
-import { appointmentsApi } from '../../api/appointments'
-import { paymentsApi } from '../../api/payments'
-import { mediaGalleryApi } from '../../api/media-gallery'
 
 export { AdminDashboard }
 
@@ -31,73 +26,25 @@ function AdminDashboard() {
   const { testimonials, loading: testimonialsLoading, error: testimonialsError } = useTestimonials()
   const { blogPosts, loading: blogLoading, error: blogError } = useBlogPosts()
   const { unreadMessages, loading: messagesLoading, error: messagesError } = useUnreadMessages()
+  const { appointments, loading: appointmentsLoading } = useAppointments()
+  const { stats: paymentsStatsData, loading: paymentsLoading } = usePayments()
 
-  const [appointmentsStats, setAppointmentsStats] = useState({
-    total: 0,
-    pending: 0,
-    confirmed: 0,
-    cancelled: 0
-  })
-  const [paymentsStats, setPaymentsStats] = useState({
+  // Static media count placeholder until media hook is updated or used
+  const mediaCount = 0
+
+  const appointmentsStats = {
+    total: appointments.length,
+    pending: appointments.filter((a: any) => a.status === 'pending').length,
+    confirmed: appointments.filter((a: any) => a.status === 'confirmed').length,
+    cancelled: appointments.filter((a: any) => a.status === 'cancelled').length
+  }
+
+  const paymentsStats = paymentsStatsData || {
     totalRevenue: 0,
     pendingAmount: 0,
     paidCount: 0,
     pendingCount: 0
-  })
-  const [mediaCount, setMediaCount] = useState(0)
-  const [loadingStats, setLoadingStats] = useState(true)
-  const [statsError, setStatsError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      setLoadingStats(true)
-      setStatsError(null)
-      try {
-        // Try to fetch appointments, but don't fail if it errors
-        try {
-          const allAppointments = await appointmentsApi.getAll()
-          const pendingAppointments = allAppointments.filter(a => a.status === 'pending').length
-          const confirmedAppointments = allAppointments.filter(a => a.status === 'confirmed').length
-          const cancelledAppointments = allAppointments.filter(a => a.status === 'cancelled').length
-
-          setAppointmentsStats({
-            total: allAppointments.length,
-            pending: pendingAppointments,
-            confirmed: confirmedAppointments,
-            cancelled: cancelledAppointments
-          })
-        } catch (appointmentsError) {
-          console.warn('Could not load appointments stats:', appointmentsError)
-          setAppointmentsStats({ total: 0, pending: 0, confirmed: 0, cancelled: 0 })
-        }
-
-        // Try to fetch payment stats, but don't fail if it errors
-        try {
-          const paymentStatsData = await paymentsApi.getStats()
-          setPaymentsStats(paymentStatsData)
-        } catch (paymentsError) {
-          console.warn('Could not load payments stats:', paymentsError)
-          setPaymentsStats({ totalRevenue: 0, pendingAmount: 0, paidCount: 0, pendingCount: 0 })
-        }
-        
-        // Try to fetch media gallery count, but don't fail if it errors
-        try {
-          const mediaItems = await mediaGalleryApi.getAll()
-          setMediaCount(mediaItems.length)
-        } catch (mediaError) {
-          console.warn('Could not load media gallery stats:', mediaError)
-          setMediaCount(0)
-        }
-
-      } catch (err) {
-        console.warn('General stats error:', err)
-        // Don't set error state, just use default values
-      } finally {
-        setLoadingStats(false)
-      }
-    }
-    fetchStats()
-  }, [])
+  }
 
   // Only show loading if core data is loading
   const coreLoading = servicesLoading || testimonialsLoading || blogLoading

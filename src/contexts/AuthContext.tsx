@@ -1,9 +1,9 @@
-import React, { createContext, useEffect, useState } from 'react'
-import { pb } from '../services/pocketbase'
-import type { RecordModel } from 'pocketbase'
+import React, { createContext } from 'react'
+import { useConvexAuth } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 export interface AuthContextType {
-  user: RecordModel | null
+  user: any | null // Convex user data or token metadata
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
@@ -13,37 +13,27 @@ export interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<RecordModel | null>(pb.authStore.model)
-  const [loading, setLoading] = useState(false) // PB auth is sync on init
+  const { isAuthenticated, isLoading } = useConvexAuth();
+  const { signIn: convexSignIn, signOut: convexSignOut } = useAuthActions();
 
-  useEffect(() => {
-    // Subscribe to auth state changes
-    const unsubscribe = pb.authStore.onChange((token, model) => {
-      setUser(model)
-    })
-
-    return () => {
-      unsubscribe()
-    }
-  }, [])
+  // For compatibility with existing components, we mock the user object
+  // In a full implementation, you'd fetch the user profile from Convex
+  const user = isAuthenticated ? { id: "convex-user" } : null;
 
   const signIn = async (email: string, password: string) => {
     try {
-      setLoading(true)
-      await pb.collection('users').authWithPassword(email, password)
+      await convexSignIn("password", { email, password, flow: "signIn" });
     } catch (error) {
-      throw error // Let the component handle the error
-    } finally {
-      setLoading(false)
+      throw error
     }
   }
 
   const signOut = async () => {
-    pb.authStore.clear()
+    await convexSignOut();
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, loading: isLoading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   )
