@@ -15,6 +15,8 @@ export const create = mutation({
         rating: v.optional(v.number()),
     },
     handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthenticated");
         return await ctx.db.insert("testimonials", args);
     },
 });
@@ -27,6 +29,8 @@ export const update = mutation({
         rating: v.optional(v.number()),
     },
     handler: async (ctx, { id, ...args }) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthenticated");
         await ctx.db.patch(id, args);
         return await ctx.db.get(id);
     },
@@ -35,6 +39,8 @@ export const update = mutation({
 export const remove = mutation({
     args: { id: v.id("testimonials") },
     handler: async (ctx, { id }) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthenticated");
         await ctx.db.delete(id);
     },
 });

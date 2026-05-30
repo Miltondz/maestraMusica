@@ -6,7 +6,7 @@
 [![Convex](https://img.shields.io/badge/Convex-Backend-orange?logo=convex)](https://convex.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0-cyan?logo=tailwindcss)](https://tailwindcss.com/)
 
-Una plataforma web moderna, elegante y autoadministrable diseñada para la gestión integral de una academia de música personal. Permite la reserva de clases, gestión de contenidos (blog, galería con soporte multimedia), administración de estudiantes y pagos, todo bajo una interfaz premium y responsiva respaldada por **Convex**.
+Una plataforma web moderna, elegante y autoadministrable diseñada para la gestión integral de una academia de música personal. Permite la reserva de clases, gestión de contenidos (blog, galería multimedia), administración de estudiantes y pagos, todo bajo una interfaz premium y responsiva respaldada por **Convex**.
 
 ---
 
@@ -14,9 +14,10 @@ Una plataforma web moderna, elegante y autoadministrable diseñada para la gesti
 
 ### 🎨 Experiencia de Usuario (Frontend)
 - **Diseño Premium**: Interfaz moderna con animaciones fluidas y diseño responsivo.
-- **Reserva de Clases**: Sistema interactivo para consultar disponibilidad y agendar lecciones en tiempo real.
+- **Reserva de Clases**: Sistema interactivo con verificación de disponibilidad en tiempo real y protección contra reservas duplicadas.
+- **Notificaciones por Email**: Confirmación automática al cliente y notificación al administrador al recibir reservas y mensajes de contacto (vía **Resend**).
 - **Contenido Dinámico**:
-  - **Blog Educativo**: Artículos formativos con formateo rico.
+  - **Blog Educativo**: Artículos formativos con slugs únicos.
   - **Galería Multimedia**: Soporte para fotos, videos e integración nativa de **YouTube** e **Instagram**.
   - **Servicios**: Catálogo claro de oferta académica.
 - **SEO Avanzado**: Implementación de JSON-LD y meta-etiquetas dinámicas.
@@ -37,7 +38,8 @@ Una plataforma web moderna, elegante y autoadministrable diseñada para la gesti
 | **Build Tool** | **Vite** | Entorno de desarrollo ultrarrápido. |
 | **Estilos** | **Tailwind CSS** | Diseño consistente y responsivo. |
 | **Backend** | **Convex** | Backend reactivo en tiempo real (Base de datos + Funciones + Storage). |
-| **Auth** | **Convex Auth** | Sistema de autenticación seguro y flexible. |
+| **Auth** | **Convex Auth** | Autenticación server-side con email/contraseña. |
+| **Email** | **Resend** | Notificaciones transaccionales automáticas. |
 
 ---
 
@@ -58,10 +60,24 @@ npm install
 ```bash
 npx convex dev
 ```
-Esto te pedirá iniciar sesión en Convex y creará un nuevo proyecto y despliegue automáticamente.
+Esto te pedirá iniciar sesión en Convex y creará un nuevo proyecto y despliegue automáticamente. Copia el valor de `CONVEX_URL` generado.
 
-### 3. Configurar Autenticación (Admin)
-Para crear el primer usuario administrador, utiliza el script de setup (solo una vez) o registra el usuario directamente si habilitas el registro público temporalmente, o contacta al administrador del sistema.
+### 3. Variables de Entorno
+
+Crea un archivo `.env.local` en la raíz:
+```env
+VITE_CONVEX_URL=<tu URL de Convex>
+```
+
+En el **Dashboard de Convex → Settings → Environment Variables**, configura:
+```
+CONVEX_SITE_URL=<tu URL de Convex>
+RESEND_API_KEY=<desde resend.com>
+RESEND_FROM_EMAIL=noreply@tudominio.com
+ADMIN_EMAIL=admin@tudominio.com
+```
+
+> **Nota:** `RESEND_API_KEY` es opcional. Sin él, las notificaciones por email se desactivan silenciosamente sin afectar el funcionamiento.
 
 ### 4. Ejecutar
 ```bash
@@ -73,19 +89,20 @@ La aplicación estará disponible en `http://localhost:5173`.
 
 ## 📂 Despliegue en Producción
 
-El proyecto está optimizado para desplegarse fácilmente.
+1. **Frontend**: Vercel, Netlify o cualquier host de estáticos.
+   - Comando de build: `npm run build`
+   - Directorio de salida: `dist`
+   - Variable requerida: `VITE_CONVEX_URL`
 
-1.  **Frontend**: Vercel, Netlify o cualquier host de estáticos.
-    *   Comando de build: `npm run build`
-    *   Directorio de salida: `dist`
-    *   **IMPORTANTE**: Debes agregar la variable de entorno `VITE_CONVEX_URL` en el panel de configuración de tu hosting. Puedes encontrar este valor en tu archivo `.env.local`.
-2.  **Backend**: Convex (gestionado automáticamente).
-    *   Asegúrate de configurar las variables de entorno en tu dashboard de Convex (Production).
+2. **Backend**: Convex (gestionado automáticamente).
+   - Configura las variables de entorno listadas arriba en el dashboard de Convex (entorno Production).
 
 ---
 
-## 🔒 Seguridad y Roles
+## 🔒 Seguridad
 
-El sistema utiliza **Convex Auth** y RLS (Row Level Security) mediante lógica en las funciones (`query` y `mutation`) para proteger los datos:
-*   **Público**: Lectura de contenido general.
-*   **Admin**: Acceso total de escritura y gestión.
+- **Autenticación server-side**: Todas las mutations de escritura/administración verifican `ctx.auth.getUserIdentity()` en Convex. La protección no depende únicamente del cliente.
+- **Público**: Lectura de servicios, blog, galería, testimonios y disponibilidad de horarios.
+- **Admin (requiere sesión)**: Toda escritura — crear, editar, eliminar en cualquier tabla — y acceso a citas, pagos y mensajes.
+- **Storage**: La generación de URLs de subida (`generateUploadUrl`) requiere autenticación.
+- **Limpieza de archivos**: Al eliminar un item de galería, el archivo en Convex Storage se elimina automáticamente.

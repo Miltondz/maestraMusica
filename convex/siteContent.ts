@@ -26,6 +26,8 @@ export const updateBulk = mutation({
         })),
     },
     handler: async (ctx, { updates }) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthenticated");
         for (const update of updates) {
             const existing = await ctx.db
                 .query("site_content")

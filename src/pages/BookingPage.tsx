@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader } from '../components/Card';
 import { useServices, useAppointments } from '../hooks';
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/dataModel";
 import { formatTime, formatDate } from '../lib/utils';
 import { Spinner } from '../components/Spinner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -68,7 +69,7 @@ export function BookingPage() {
       await createAppointment({
         client_name: data.client_name,
         client_email: data.client_email,
-        service_id: data.service_id as any,
+        service_id: data.service_id as Id<"services">,
         notes: data.notes,
         appointment_date: selectedDate.toISOString().split('T')[0],
         appointment_time: selectedTime,

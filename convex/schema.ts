@@ -76,9 +76,11 @@ export default defineSchema({
     media_url: v.string(),
     thumbnail_url: v.optional(v.string()),
     category: v.string(),
-    tags: v.optional(v.any()), // Can be array or string depending on processing
+    tags: v.optional(v.array(v.string())),
     is_featured: v.optional(v.boolean()),
-  }).index("by_category", ["category"]),
+    storageId: v.optional(v.id("_storage")),
+  }).index("by_category", ["category"])
+    .index("by_featured", ["is_featured"]),
 
   // Mensajes de contacto
   contact_messages: defineTable({

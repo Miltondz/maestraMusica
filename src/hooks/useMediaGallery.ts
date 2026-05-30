@@ -21,12 +21,11 @@ export const useMediaGallery = () => {
 };
 
 export const useFeaturedMedia = () => {
-  const mediaItems = useQuery(api.mediaGallery.list);
-  const featuredItems = mediaItems?.filter(item => item.is_featured) ?? [];
+  const featuredItems = useQuery(api.mediaGallery.listFeatured);
 
   return {
-    featuredItems,
-    loading: mediaItems === undefined,
+    featuredItems: featuredItems ?? [],
+    loading: featuredItems === undefined,
     error: null,
     fetchFeaturedItems: () => { }
   };

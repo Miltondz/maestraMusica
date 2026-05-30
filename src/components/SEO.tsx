@@ -14,7 +14,7 @@ interface SEOProps {
 export function SEO({ 
   title, 
   description, 
-  image = '/logo-placeholder.png', // Add a default logo path later
+  image = '/logo.png',
   url,
   type = 'website',
   keywords = [],
@@ -32,7 +32,6 @@ export function SEO({
     "image": image,
     "description": description,
     "url": currentUrl,
-    "telephone": "+58-000-0000000",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Punto Fijo",

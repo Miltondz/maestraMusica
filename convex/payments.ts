@@ -4,6 +4,8 @@ import { v } from "convex/values";
 export const list = query({
     args: {},
     handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthenticated");
         return await ctx.db.query("payments").order("desc").collect();
     },
 });
@@ -11,6 +13,8 @@ export const list = query({
 export const getByAppointmentId = query({
     args: { appointmentId: v.id("appointments") },
     handler: async (ctx, { appointmentId }) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthenticated");
         return await ctx.db
             .query("payments")
             .withIndex("by_appointment", (q) => q.eq("appointment_id", appointmentId))
@@ -32,6 +36,8 @@ export const create = mutation({
         ),
     },
     handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthenticated");
         return await ctx.db.insert("payments", args);
     },
 });
@@ -47,6 +53,8 @@ export const updateStatus = mutation({
         ),
     },
     handler: async (ctx, { id, status }) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthenticated");
         await ctx.db.patch(id, { status });
         return await ctx.db.get(id);
     },
@@ -55,6 +63,8 @@ export const updateStatus = mutation({
 export const getStats = query({
     args: {},
     handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthenticated");
         const payments = await ctx.db.query("payments").collect();
 
         const totalRevenue = payments
@@ -68,18 +78,15 @@ export const getStats = query({
         const paidCount = payments.filter((p) => p.status === "completed").length;
         const pendingCount = payments.filter((p) => p.status === "pending").length;
 
-        return {
-            totalRevenue,
-            pendingAmount,
-            paidCount,
-            pendingCount,
-        };
+        return { totalRevenue, pendingAmount, paidCount, pendingCount };
     },
 });
 
 export const remove = mutation({
     args: { id: v.id("payments") },
     handler: async (ctx, { id }) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthenticated");
         await ctx.db.delete(id);
     },
 });
