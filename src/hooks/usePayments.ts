@@ -1,9 +1,10 @@
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useConvexAuth } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
 export function usePayments() {
-    const payments = useQuery(api.payments.list);
-    const stats = useQuery(api.payments.getStats);
+    const { isAuthenticated } = useConvexAuth();
+    const payments = useQuery(api.payments.list, isAuthenticated ? {} : "skip");
+    const stats = useQuery(api.payments.getStats, isAuthenticated ? {} : "skip");
     const createPayment = useMutation(api.payments.create);
     const updateStatus = useMutation(api.payments.updateStatus);
     const deletePayment = useMutation(api.payments.remove);

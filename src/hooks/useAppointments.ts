@@ -1,8 +1,9 @@
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useConvexAuth } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
 export function useAppointments() {
-    const appointments = useQuery(api.appointments.list);
+    const { isAuthenticated } = useConvexAuth();
+    const appointments = useQuery(api.appointments.list, isAuthenticated ? {} : "skip");
     const createAppointment = useMutation(api.appointments.create);
     const updateStatus = useMutation(api.appointments.updateStatus);
     const deleteAppointment = useMutation(api.appointments.remove);

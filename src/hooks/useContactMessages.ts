@@ -1,9 +1,10 @@
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useConvexAuth } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { ContactMessage } from '../types'
 
 export const useContactMessages = () => {
-  const messages = useQuery(api.contactMessages.list);
+  const { isAuthenticated } = useConvexAuth();
+  const messages = useQuery(api.contactMessages.list, isAuthenticated ? {} : "skip");
   const markAsReadMutation = useMutation(api.contactMessages.markAsRead);
   const removeMessageMutation = useMutation(api.contactMessages.remove);
   const addResponseMutation = useMutation(api.contactMessages.addResponse);
@@ -40,7 +41,8 @@ export const useContactMessages = () => {
 }
 
 export const useUnreadMessages = () => {
-  const messages = useQuery(api.contactMessages.list);
+  const { isAuthenticated } = useConvexAuth();
+  const messages = useQuery(api.contactMessages.list, isAuthenticated ? {} : "skip");
   const unreadMessages = messages?.filter(m => !m.is_read) ?? [];
 
   return {
