@@ -16,6 +16,7 @@ import type * as http from "../http.js";
 import type * as mediaGallery from "../mediaGallery.js";
 import type * as mediaUploads from "../mediaUploads.js";
 import type * as payments from "../payments.js";
+import type * as resend from "../resend.js";
 import type * as services from "../services.js";
 import type * as siteContent from "../siteContent.js";
 import type * as testimonials from "../testimonials.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   mediaGallery: typeof mediaGallery;
   mediaUploads: typeof mediaUploads;
   payments: typeof payments;
+  resend: typeof resend;
   services: typeof services;
   siteContent: typeof siteContent;
   testimonials: typeof testimonials;
