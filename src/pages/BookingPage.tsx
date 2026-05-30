@@ -12,6 +12,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
 import { formatTime, formatDate } from '../lib/utils';
+import { getFriendlyError } from '../lib/errors';
 import { Spinner } from '../components/Spinner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
@@ -79,7 +80,7 @@ export function BookingPage() {
       setSelectedDate(undefined);
       setSelectedTime('');
     } catch (error) {
-      setBookingError(error instanceof Error ? error.message : 'No se pudo enviar la solicitud. Intenta de nuevo.');
+      setBookingError(getFriendlyError(error, 'No se pudo enviar la solicitud. Intenta de nuevo.'));
     } finally {
       setSubmitting(false);
     }

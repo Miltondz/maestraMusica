@@ -6,6 +6,7 @@ import { Spinner } from '../../components/Spinner'
 import { useAdminForm } from '../../hooks/useAdminForm'
 import { useTestimonials } from '../../hooks/useTestimonials'
 import { formatDate } from '../../lib/utils'
+import { getFriendlyError } from '../../lib/errors'
 import type { Testimonial, CreateTestimonialData } from '../../types'
 
 export function TestimonialsManagement() {
@@ -53,7 +54,7 @@ export function TestimonialsManagement() {
     try {
       await deleteTestimonial({ id: _id as any })
     } catch (error) {
-      alert('Error al eliminar el testimonio: ' + (error instanceof Error ? error.message : 'Error desconocido'))
+      alert('Error al eliminar el testimonio: ' + getFriendlyError(error))
     } finally {
       setDeleting(null)
     }

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from '../components/Card';
 import { Button } from '../components/Button';
 import { Spinner } from '../components/Spinner';
 import { useAuth } from '../hooks/useAuth';
+import { getFriendlyError } from '../lib/errors';
 import { motion } from 'framer-motion';
 
 export function LoginPage() {
@@ -29,7 +30,7 @@ export function LoginPage() {
       await signIn(email, password);
       // Navigation is handled by useEffect
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error de inicio de sesión. Verifica tus credenciales.');
+      setError(getFriendlyError(err, 'Error de inicio de sesión. Verifica tus credenciales.'));
     } finally {
       setLoading(false);
     }

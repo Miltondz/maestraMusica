@@ -97,7 +97,7 @@ export function ImageUpload({
     const trimmedUrl = urlInput.trim();
     if (trimmedUrl) {
       if (!isValidImageUrl(trimmedUrl)) {
-        setError('Please enter a valid image URL (jpg, png, gif, webp, etc.)');
+        setError('Ingresa una URL de imagen válida (jpg, png, gif, webp, etc.).');
         return;
       }
       setPreviewUrl(trimmedUrl);
@@ -144,7 +144,7 @@ export function ImageUpload({
               src={previewUrl}
               alt="Upload preview"
               className="max-w-full max-h-48 mx-auto rounded-lg object-cover"
-              onError={() => setError('Failed to load image. Please check the URL or try a different image.')}
+              onError={() => setError('No se pudo cargar la imagen. Verifica la URL o intenta con otra.')}
             />
             <Button
               type="button"

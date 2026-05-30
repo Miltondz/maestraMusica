@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { Spinner } from '../../components/Spinner';
 import { formatDate } from '../../lib/utils';
+import { getFriendlyError } from '../../lib/errors';
 import { useContactMessages } from '../../hooks/useContactMessages';
 import type { ContactMessage } from '../../types';
 import jsPDF from 'jspdf';
@@ -30,7 +31,7 @@ function MessagesManagement() {
     try {
       await markAsRead(_id);
     } catch (err) {
-      alert('Error al marcar mensaje como leído: ' + (err instanceof Error ? err.message : 'Error desconocido'));
+      alert('Error al marcar mensaje como leído: ' + getFriendlyError(err));
     }
   };
 
@@ -48,7 +49,7 @@ function MessagesManagement() {
       setRespondingTo(null);
       setAdminResponseText('');
     } catch (err) {
-      alert('Error al enviar respuesta: ' + (err instanceof Error ? err.message : 'Error desconocido'));
+      alert('Error al enviar respuesta: ' + getFriendlyError(err));
     } finally {
       setSubmittingResponse(false);
     }
@@ -61,7 +62,7 @@ function MessagesManagement() {
     try {
       await removeMessage(_id);
     } catch (err) {
-      alert('Error al eliminar mensaje: ' + (err instanceof Error ? err.message : 'Error desconocido'));
+      alert('Error al eliminar mensaje: ' + getFriendlyError(err));
     } finally {
       setDeletingMessage(null);
     }

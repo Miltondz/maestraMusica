@@ -5,6 +5,7 @@ import { Button } from '../../components/Button';
 import { Spinner } from '../../components/Spinner';
 import { usePayments, useAppointments } from '../../hooks';
 import { formatDate, formatPrice, formatTime } from '../../lib/utils';
+import { getFriendlyError } from '../../lib/errors';
 import type { Payment, Appointment, CreatePaymentData } from '../../types';
 import { Id } from '../../../convex/_generated/dataModel';
 import jsPDF from 'jspdf';
@@ -63,7 +64,7 @@ function AddPaymentModal({
       await createPayment({ ...formData, appointment_id: formData.appointment_id as any });
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al crear el pago.');
+      setError(getFriendlyError(err, 'Error al crear el pago.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -256,7 +257,7 @@ export function EnhancedPaymentsManagement() {
       setNotification({ message: 'Estado del pago actualizado.', type: 'success' });
     } catch (error) {
       setNotification({
-        message: 'Error al actualizar el pago: ' + (error instanceof Error ? error.message : 'Error desconocido'),
+        message: 'Error al actualizar el pago: ' + getFriendlyError(error),
         type: 'error'
       });
     } finally {
@@ -282,7 +283,7 @@ export function EnhancedPaymentsManagement() {
       setNotification({ message: 'Pago eliminado correctamente.', type: 'success' });
     } catch (error) {
       setNotification({
-        message: 'Error al eliminar el pago: ' + (error instanceof Error ? error.message : 'Error desconocido'),
+        message: 'Error al eliminar el pago: ' + getFriendlyError(error),
         type: 'error'
       });
     } finally {

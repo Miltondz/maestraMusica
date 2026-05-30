@@ -8,6 +8,7 @@ import { PasteButton } from '../../components/PasteButton'
 import { ImageUpload } from '../../components/ImageUpload'
 import { extractYouTubeId, isValidInstagramUrl, isValidYouTubeUrl, processEmbedCode, isYouTubeEmbed, extractYouTubeIdFromEmbed, isInstagramEmbed, extractInstagramIdFromEmbed, convertEmbedToUrl } from '../../lib/utils'
 import type { MediaGallery as MediaItem } from '../../types'
+import { getFriendlyError } from '../../lib/errors'
 
 type MediaFormData = {
   title: string
@@ -206,6 +207,7 @@ export function EnhancedMediaManagement() {
       await fetchMediaItems()
     } catch (error) {
       console.error('Error al guardar el elemento multimedia:', error)
+      alert('Error al guardar el elemento multimedia: ' + getFriendlyError(error))
     } finally {
       setSubmitting(false)
     }
@@ -248,6 +250,7 @@ export function EnhancedMediaManagement() {
         await fetchMediaItems()
       } catch (error) {
         console.error('Error al eliminar el elemento multimedia:', error)
+        alert('Error al eliminar el elemento multimedia: ' + getFriendlyError(error))
       }
     }
   }

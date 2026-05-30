@@ -6,6 +6,7 @@ import { Mail, Phone, MapPin, Clock, Facebook, Instagram, Youtube, Send, CheckCi
 import { motion } from 'framer-motion';
 import { Spinner } from '../components/Spinner';
 import { useSiteContent } from '../hooks/useSiteContent';
+import { getFriendlyError } from '../lib/errors';
 
 type InquiryType = 'general' | 'lessons' | 'events' | 'technical';
 
@@ -71,7 +72,7 @@ export function ContactPage() {
       setIsSubmitted(true);
       setFormData({ name: '', email: '', phone: '', inquiry_type: 'general', message: '' });
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Error al enviar el mensaje. Por favor, inténtalo de nuevo.');
+      setSubmitError(getFriendlyError(err, 'Error al enviar el mensaje. Por favor, inténtalo de nuevo.'));
     } finally {
       setLoading(false);
     }

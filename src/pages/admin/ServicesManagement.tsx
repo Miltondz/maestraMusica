@@ -7,6 +7,7 @@ import { ImageUpload } from '../../components/ImageUpload'
 import { useAdminForm } from '../../hooks/useAdminForm'
 import { useServices } from '../../hooks/useServices'
 import { formatPrice } from '../../lib/utils'
+import { getFriendlyError } from '../../lib/errors'
 import type { Service, CreateServiceData } from '../../types'
 
 export function ServicesManagement() {
@@ -58,7 +59,7 @@ export function ServicesManagement() {
     try {
       await deleteService({ id: _id as any })
     } catch (error) {
-      alert('Error al eliminar el servicio: ' + (error instanceof Error ? error.message : 'Error desconocido'))
+      alert('Error al eliminar el servicio: ' + getFriendlyError(error))
     } finally {
       setDeleting(null)
     }

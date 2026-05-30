@@ -6,6 +6,7 @@ import { Spinner } from '../../components/Spinner'
 import { ImageUpload } from '../../components/ImageUpload'
 import { useBlogPosts } from '../../hooks/useBlogPosts'
 import { formatDate } from '../../lib/utils'
+import { getFriendlyError } from '../../lib/errors'
 import type { BlogPost, CreateBlogPostData } from '../../types'
 
 export function BlogManagement() {
@@ -106,7 +107,7 @@ export function BlogManagement() {
       }
       handleCancel()
     } catch (error) {
-      setFormError(error instanceof Error ? error.message : 'Ocurrió un error')
+      setFormError(getFriendlyError(error))
     } finally {
       setSubmitting(false)
     }
@@ -119,7 +120,7 @@ export function BlogManagement() {
     try {
       await deleteBlogPost({ id: _id as any })
     } catch (error) {
-      alert('Error al eliminar la publicación: ' + (error instanceof Error ? error.message : 'Error desconocido'))
+      alert('Error al eliminar la publicación: ' + getFriendlyError(error))
     } finally {
       setDeleting(null)
     }

@@ -4,6 +4,7 @@ import type { SiteContent } from '../../types';
 import { Button } from '../../components/Button';
 import { Card, CardContent, CardHeader } from '../../components/Card';
 import { Spinner } from '../../components/Spinner';
+import { getFriendlyError } from '../../lib/errors';
 import { AlertCircle } from 'lucide-react';
 
 export function ContentManagement() {
@@ -38,7 +39,7 @@ export function ContentManagement() {
       await updateContent(localContent as any);
       alert('¡Contenido actualizado correctamente!');
     } catch (err) {
-      alert('Error al actualizar el contenido: ' + (err instanceof Error ? err.message : 'Error desconocido'));
+      alert('Error al actualizar el contenido: ' + getFriendlyError(err));
     } finally {
       setSaving(false);
     }

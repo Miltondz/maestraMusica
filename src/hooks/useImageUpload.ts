@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { getFriendlyError } from '../lib/errors';
 
 export interface UseImageUploadOptions {
   onSuccess?: (url: string) => void;
@@ -21,7 +22,7 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
       setProgress(10);
 
       if (!file.type.startsWith('image/')) {
-        throw new Error('Please select an image file');
+        throw new Error('Por favor selecciona un archivo de imagen.');
       }
 
       // Step 1: Get a short-lived upload URL from Convex
@@ -36,7 +37,7 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
       });
 
       if (!result.ok) {
-        throw new Error(`Upload failed: ${result.statusText}`);
+        throw new Error('Error al subir el archivo. Intenta de nuevo.');
       }
 
       const { storageId } = await result.json();
@@ -45,7 +46,7 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
       // Step 3: Save the storageId in our database (optional metadata)
       const url = await saveImage({ storageId });
       if (!url) {
-        throw new Error('Failed to generate image URL');
+        throw new Error('No se pudo generar la URL de la imagen.');
       }
       setProgress(90);
 
@@ -56,7 +57,7 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
       options.onSuccess?.(imageUrl);
       return imageUrl;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Upload failed';
+      const errorMessage = getFriendlyError(error, 'No se pudo subir la imagen. Intenta de nuevo.');
       options.onError?.(errorMessage);
       throw error;
     } finally {

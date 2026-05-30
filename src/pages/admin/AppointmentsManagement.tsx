@@ -5,6 +5,7 @@ import { Button } from '../../components/Button';
 import { Spinner } from '../../components/Spinner';
 import { useAppointments, useServices } from '../../hooks';
 import { formatDate, formatTime, formatPrice } from '../../lib/utils';
+import { getFriendlyError } from '../../lib/errors';
 import type { Appointment, Service } from '../../types';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -29,7 +30,7 @@ export function AppointmentsManagement() {
     try {
       await updateStatus({ id: appointmentId as any, status });
     } catch (error) {
-      alert('Error al actualizar la cita: ' + (error instanceof Error ? error.message : 'Error desconocido'));
+      alert('Error al actualizar la cita: ' + getFriendlyError(error));
     } finally {
       setUpdatingStatus(null);
     }
@@ -41,7 +42,7 @@ export function AppointmentsManagement() {
     try {
       await deleteAppointment({ id: appointmentId as any });
     } catch (error) {
-      alert('Error al eliminar la cita: ' + (error instanceof Error ? error.message : 'Error desconocido'));
+      alert('Error al eliminar la cita: ' + getFriendlyError(error));
     }
   };
 
